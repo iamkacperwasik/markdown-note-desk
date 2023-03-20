@@ -1,6 +1,8 @@
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 
+import Sidebar from "components/Sidebar"
+
 const View = ({id}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
@@ -8,8 +10,12 @@ const View = ({id}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div>
-        <h1>View: {id}</h1>
+      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
+        <Sidebar />
+
+        <div>
+          <h1>View: {id}</h1>
+        </div>
       </div>
     </>
   )
