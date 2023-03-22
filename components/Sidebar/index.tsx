@@ -16,17 +16,21 @@ const Sidebar = () => (
     </div>
 
     <div className="flex h-full flex-col justify-between overflow-y-auto">
-      <div>
-        <Heading>Bookmarks</Heading>
-
+      <div className="flex flex-col gap-4">
         <div>
-          <Note document={{name: "Bookmark 1"}} opened />
-          <Note document={{name: "Bookmark 2"}} />
+          <Heading>Bookmarks</Heading>
+
+          <div>
+            <Note document={{name: "Bookmark 1"}} opened />
+            <Note document={{name: "Bookmark 2"}} />
+          </div>
         </div>
 
-        <Heading>Notes</Heading>
+        <div>
+          <Heading>Notes</Heading>
 
-        <Note document={{name: "Lorem ipsum dolor sit amet."}} />
+          <Note document={{name: "Lorem ipsum dolor sit amet."}} />
+        </div>
       </div>
     </div>
 
