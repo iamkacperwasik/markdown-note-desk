@@ -1,10 +1,9 @@
 import Heading from "components/Sidebar/Heading"
+import NewNoteButton from "components/Sidebar/NewNoteButton"
 import Note from "components/Sidebar/Note"
 import Profile from "components/Sidebar/Profile"
 import Search from "components/Sidebar/Search"
-
-import NewNoteButton from "./NewNoteButton"
-import ThemeSwitch from "./ThemeSwitch"
+import ThemeSwitch from "components/Sidebar/ThemeSwitch"
 
 const Sidebar = () => (
   <div className="flex h-screen w-1/4 flex-col justify-between bg-zinc-100">
