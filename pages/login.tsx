@@ -15,7 +15,7 @@ const Login = () => {
 
   useEffect(() => {
     supabaseClient.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN") router.replace("/")
+      if (event === "SIGNED_IN") router.reload()
     })
   }, [router, supabaseClient.auth])
 
@@ -27,7 +27,7 @@ const Login = () => {
 
       <div className="flex h-screen items-center justify-center bg-zinc-100">
         <Auth
-          supabaseClient={useSupabaseClient()}
+          supabaseClient={supabaseClient}
           providers={[]}
           appearance={{
             extend: false,
