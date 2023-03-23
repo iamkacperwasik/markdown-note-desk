@@ -1,3 +1,4 @@
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 
@@ -25,6 +26,21 @@ export const getServerSideProps: GetServerSideProps<
   {id: string},
   {id: string}
 > = async (ctx) => {
+  const supabase = createServerSupabaseClient(ctx)
+
+  const {
+    data: {session},
+  } = await supabase.auth.getSession()
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    }
+  }
+
   const {id} = ctx.params!
 
   console.log({id})

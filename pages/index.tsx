@@ -1,9 +1,10 @@
-import type {GetServerSideProps} from "next"
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
+import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 
 import Sidebar from "components/Sidebar"
 
-const Main = () => {
+const Main = ({}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <>
       <Head>
@@ -17,10 +18,27 @@ const Main = () => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const supabase = createServerSupabaseClient(ctx)
+
+  const {
+    data: {session},
+  } = await supabase.auth.getSession()
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/login",
+        permanent: false,
+      },
+    }
+  }
+
   // fetch all notes
 
-  return {props: {}}
+  return {
+    props: {},
+  }
 }
 
 export default Main

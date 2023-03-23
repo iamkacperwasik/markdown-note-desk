@@ -1,14 +1,12 @@
+import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
 import NewNoteButton from "components/Sidebar/NewNoteButton"
 import Note from "components/Sidebar/Note"
-import Profile from "components/Sidebar/Profile"
 import Search from "components/Sidebar/Search"
-import ThemeSwitch from "components/Sidebar/ThemeSwitch"
 
 const Sidebar = () => (
   <div className="flex h-screen w-1/4 flex-col justify-between bg-zinc-100">
-    <div className="p-8">
-      <Profile />
+    <div className="mb-8 px-8">
       <Search />
 
       <hr />
@@ -38,7 +36,7 @@ const Sidebar = () => (
     <div className="px-8">
       <hr />
 
-      <ThemeSwitch />
+      <Footer />
     </div>
   </div>
 )
