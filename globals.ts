@@ -1,3 +1,7 @@
+import type {Database} from "types/supabase"
+
 export {}
 
-declare global {}
+declare global {
+  type Note = Database["public"]["Tables"]["notes"]["Row"]
+}
