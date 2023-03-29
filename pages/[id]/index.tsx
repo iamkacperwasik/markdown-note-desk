@@ -1,10 +1,23 @@
 import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
+import {useEffect} from "react"
+import {Database} from "types/supabase"
 
 import Sidebar from "components/Sidebar"
 
-const View = ({id}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+import {useNotesStore} from "stores/NotesStore"
+
+const View = ({
+  notes,
+  id,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const {set_notes} = useNotesStore()
+
+  useEffect(() => {
+    set_notes(notes)
+  }, [notes, set_notes])
+
   return (
     <>
       <Head>
@@ -22,11 +35,12 @@ const View = ({id}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   )
 }
 
-export const getServerSideProps: GetServerSideProps<
-  {id: string},
-  {id: string}
-> = async (ctx) => {
-  const supabase = createServerSupabaseClient(ctx)
+// @ts-ignore
+export const getServerSideProps: GetServerSideProps<{
+  notes: Note[]
+  id: string
+}> = async (ctx) => {
+  const supabase = createServerSupabaseClient<Database>(ctx)
 
   const {
     data: {session},
@@ -45,10 +59,21 @@ export const getServerSideProps: GetServerSideProps<
 
   console.log({id})
 
-  // fetch specific note
+  const {data: bookmarks} = await supabase
+    .from("notes")
+    .select("*")
+    .eq("is_bookmark", true)
+    .range(0, 4)
+
+  const {data: notes} = await supabase
+    .from("notes")
+    .select("*")
+    .eq("is_bookmark", false)
+    .range(0, 4)
 
   return {
     props: {
+      notes: [bookmarks!, notes!].flat(),
       id,
     },
   }

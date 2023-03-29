@@ -1,5 +1,6 @@
 import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
+import LoadMoreButton from "components/Sidebar/LoadMoreButton"
 import NewNoteButton from "components/Sidebar/NewNoteButton"
 import Note from "components/Sidebar/Note"
 import Search from "components/Sidebar/Search"
@@ -33,6 +34,8 @@ const Sidebar = () => {
                   />
                 ))}
             </div>
+
+            <LoadMoreButton bookmarked />
           </div>
 
           <div>
@@ -47,11 +50,17 @@ const Sidebar = () => {
                   opened={note.id === opened_note_id}
                 />
               ))}
+
+            <LoadMoreButton />
           </div>
         </div>
       </div>
 
-      <NewNoteButton />
+      <div className="px-8">
+        <hr />
+
+        <NewNoteButton />
+      </div>
 
       <div className="px-8">
         <hr />

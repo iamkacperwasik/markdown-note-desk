@@ -2,7 +2,6 @@ import {
   createBrowserSupabaseClient,
   createServerSupabaseClient,
 } from "@supabase/auth-helpers-nextjs"
-import {useSupabaseClient} from "@supabase/auth-helpers-react"
 import {Auth} from "@supabase/auth-ui-react"
 import {GetServerSideProps} from "next"
 import Head from "next/head"

@@ -48,10 +48,22 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
-  const {data} = await supabase.from("notes").select("*")
+  const {data: bookmarks} = await supabase
+    .from("notes")
+    .select("*")
+    .eq("is_bookmark", true)
+    .range(0, 4)
+
+  const {data: notes} = await supabase
+    .from("notes")
+    .select("*")
+    .eq("is_bookmark", false)
+    .range(0, 4)
 
   return {
-    props: {notes: data!},
+    props: {
+      notes: [bookmarks!, notes!].flat(),
+    },
   }
 }
 
