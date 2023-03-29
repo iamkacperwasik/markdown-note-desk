@@ -7,62 +7,38 @@ import {useNotesStore} from "stores/NotesStore"
 const LoadMoreButton: FC<{bookmarked?: boolean}> = ({bookmarked = false}) => {
   const [all_notes_fetched, set_all_notes_fetched] = useState(false)
   const supabase = useSupabaseClient<Database>()
-  const {
-    notes_pagination_offset,
-    bookmarked_pagination_offset,
-    set_bookmarked_pagination_offset,
-    set_notes_pagination_offset,
-    push_notes,
-  } = useNotesStore()
+  const {pagination_offset, set_pagination_offset, push_notes} = useNotesStore()
 
   useEffect(() => {
-    if (bookmarked && bookmarked_pagination_offset < 5) {
+    if (
+      (bookmarked && pagination_offset.bookmarks < 5) ||
+      (!bookmarked && pagination_offset.notes < 5)
+    ) {
       set_all_notes_fetched(true)
 
       return
     }
-
-    if (!bookmarked && notes_pagination_offset < 5) {
-      set_all_notes_fetched(true)
-
-      return
-    }
-  }, [bookmarked, bookmarked_pagination_offset, notes_pagination_offset])
+  }, [bookmarked, pagination_offset.bookmarks, pagination_offset.notes])
 
   const load_more_posts = async () => {
     if (all_notes_fetched) {
       return
     }
 
-    if (bookmarked) {
-      const {data: notes} = await supabase
-        .from("notes")
-        .select("*")
-        .eq("is_bookmark", true)
-        .range(bookmarked_pagination_offset, bookmarked_pagination_offset + 1)
+    const offset_for = bookmarked ? "bookmarks" : "notes"
 
-      if (notes!.length <= 1) {
-        set_all_notes_fetched(true)
-      }
+    const {data: notes} = await supabase
+      .from("notes")
+      .select("*")
+      .eq("is_bookmark", bookmarked)
+      .range(pagination_offset[offset_for], pagination_offset[offset_for] + 1)
 
-      // @ts-ignore
-      push_notes(notes)
-      set_bookmarked_pagination_offset(bookmarked_pagination_offset + 2)
-    } else {
-      const {data: notes} = await supabase
-        .from("notes")
-        .select("*")
-        .eq("is_bookmark", false)
-        .range(notes_pagination_offset, notes_pagination_offset + 1)
-
-      if (notes!.length <= 1) {
-        set_all_notes_fetched(true)
-      }
-
-      // @ts-ignore
-      push_notes(notes)
-      set_notes_pagination_offset(notes_pagination_offset + 2)
+    if (notes!.length <= 1) {
+      set_all_notes_fetched(true)
     }
+
+    push_notes(notes!)
+    set_pagination_offset(offset_for, pagination_offset[offset_for] + 2)
   }
 
   return (

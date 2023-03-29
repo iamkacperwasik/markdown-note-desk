@@ -3,26 +3,33 @@ import {create} from "zustand"
 export type NotesStore = {
   notes: Note[]
   opened_note_id: Note["id"] | null
-  notes_pagination_offset: number
-  bookmarked_pagination_offset: number
-
-  set_notes_pagination_offset: (offset: number) => void
-  set_bookmarked_pagination_offset: (offset: number) => void
+  pagination_offset: {
+    bookmarks: number
+    notes: number
+  }
   set_notes: (notes: Note[]) => void
   push_notes: (notes: Note[]) => void
+  set_pagination_offset: (
+    offset_for: keyof NotesStore["pagination_offset"],
+    offset: number
+  ) => void
 }
 
 export const useNotesStore = create<NotesStore>((set, get) => ({
   notes: [],
   opened_note_id: get()?.notes[0]?.id || null,
-  bookmarked_pagination_offset: 5,
-  notes_pagination_offset: 5,
-
-  set_notes_pagination_offset: (offset) => {
-    set({notes_pagination_offset: offset})
+  pagination_offset: {
+    notes: 5,
+    bookmarks: 5,
   },
-  set_bookmarked_pagination_offset: (offset) => {
-    set({bookmarked_pagination_offset: offset})
+  set_pagination_offset: (offset_for, offset) => {
+    set((state) => ({
+      ...state,
+      pagination_offset: {
+        ...state.pagination_offset,
+        [offset_for]: offset,
+      },
+    }))
   },
   set_notes: (notes: Note[]) => {
     const opened_note_id = notes[0]?.id || null
@@ -30,15 +37,16 @@ export const useNotesStore = create<NotesStore>((set, get) => ({
     set({
       notes,
       opened_note_id,
-      bookmarked_pagination_offset: notes.filter(({is_bookmark}) => is_bookmark)
-        .length,
-      notes_pagination_offset: notes.filter(({is_bookmark}) => !is_bookmark)
-        .length,
+      pagination_offset: {
+        notes: notes.filter(({is_bookmark}) => !is_bookmark).length,
+        bookmarks: notes.filter(({is_bookmark}) => is_bookmark).length,
+      },
     })
   },
   push_notes: (new_notes: Note[]) => {
-    set({
-      notes: get().notes.concat(new_notes),
-    })
+    set((state) => ({
+      ...state,
+      notes: state.notes.concat(new_notes),
+    }))
   },
 }))

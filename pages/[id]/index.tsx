@@ -3,6 +3,7 @@ import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 import {useEffect} from "react"
 import {Database} from "types/supabase"
+import {fetchNotes} from "utils/fetchNotes"
 
 import Sidebar from "components/Sidebar"
 
@@ -59,21 +60,11 @@ export const getServerSideProps: GetServerSideProps<{
 
   console.log({id})
 
-  const {data: bookmarks} = await supabase
-    .from("notes")
-    .select("*")
-    .eq("is_bookmark", true)
-    .range(0, 4)
-
-  const {data: notes} = await supabase
-    .from("notes")
-    .select("*")
-    .eq("is_bookmark", false)
-    .range(0, 4)
+  const notes = await fetchNotes(supabase)
 
   return {
     props: {
-      notes: [bookmarks!, notes!].flat(),
+      notes,
       id,
     },
   }
