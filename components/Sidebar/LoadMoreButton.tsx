@@ -9,6 +9,8 @@ const LoadMoreButton: FC<{bookmarked?: boolean}> = ({bookmarked = false}) => {
   const supabase = useSupabaseClient<Database>()
   const {pagination_offset, set_pagination_offset, push_notes} = useNotesStore()
 
+  const offset_for = bookmarked ? "bookmarks" : "notes"
+
   useEffect(() => {
     if (
       (bookmarked && pagination_offset.bookmarks < 5) ||
@@ -20,12 +22,27 @@ const LoadMoreButton: FC<{bookmarked?: boolean}> = ({bookmarked = false}) => {
     }
   }, [bookmarked, pagination_offset.bookmarks, pagination_offset.notes])
 
+  useEffect(() => {
+    console.log("check")
+    supabase
+      .from("notes")
+      .select("*", {count: "exact", head: true})
+      .eq("is_bookmark", bookmarked)
+      .then(({count: notes_count}) => {
+        console.log(notes_count)
+        if (notes_count === pagination_offset[offset_for]) {
+          set_all_notes_fetched(true)
+
+          return
+        }
+      })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const load_more_posts = async () => {
     if (all_notes_fetched) {
       return
     }
-
-    const offset_for = bookmarked ? "bookmarks" : "notes"
 
     const {data: notes} = await supabase
       .from("notes")
