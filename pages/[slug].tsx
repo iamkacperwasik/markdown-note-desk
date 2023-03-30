@@ -11,13 +11,15 @@ import {useNotesStore} from "stores/NotesStore"
 
 const View = ({
   notes,
-  id,
+  slug,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const {set_notes} = useNotesStore()
+  const {set_notes, set_opened_note_slug} = useNotesStore()
 
   useEffect(() => {
+    console.log({slug})
     set_notes(notes)
-  }, [notes, set_notes])
+    set_opened_note_slug(slug)
+  }, [notes, set_notes, set_opened_note_slug, slug])
 
   return (
     <>
@@ -29,7 +31,7 @@ const View = ({
         <Sidebar />
 
         <div>
-          <h1>View: {id}</h1>
+          <h1>View: {slug}</h1>
         </div>
       </div>
     </>
@@ -39,10 +41,10 @@ const View = ({
 export const getServerSideProps: GetServerSideProps<
   {
     notes: Note[]
-    id: string
+    slug: string
   },
   {
-    id: string
+    slug: string
   }
 > = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
@@ -60,13 +62,13 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  const {id} = ctx.params!
+  const {slug} = ctx.params!
   const notes = await fetch_notes(supabase)
 
   return {
     props: {
       notes,
-      id,
+      slug,
     },
   }
 }

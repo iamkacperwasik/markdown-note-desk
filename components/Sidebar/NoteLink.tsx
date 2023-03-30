@@ -1,7 +1,7 @@
 import {FC} from "react"
 import {HiOutlineDocumentText} from "react-icons/hi"
 
-const Note: FC<{
+const NoteLink: FC<{
   opened?: boolean
   document: Note
 }> = ({opened = false, document: {title}}) => (
@@ -18,4 +18,4 @@ const Note: FC<{
   </div>
 )
 
-export default Note
+export default NoteLink

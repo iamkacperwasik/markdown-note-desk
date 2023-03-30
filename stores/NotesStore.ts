@@ -2,7 +2,6 @@ import {create} from "zustand"
 
 export type NotesStore = {
   notes: Note[]
-  opened_note_id: Note["id"] | null
   pagination_offset: {
     bookmarks: number
     notes: number
@@ -13,15 +12,18 @@ export type NotesStore = {
     offset_for: keyof NotesStore["pagination_offset"],
     offset: number
   ) => void
+
+  opened_note_slug: Note["title_slug"] | null
+  set_opened_note_slug: (slug: Note["title_slug"]) => void
 }
 
-export const useNotesStore = create<NotesStore>((set, get) => ({
+export const useNotesStore = create<NotesStore>((set) => ({
   notes: [],
-  opened_note_id: get()?.notes[0]?.id || null,
   pagination_offset: {
     notes: 5,
     bookmarks: 5,
   },
+  opened_note_slug: null,
   set_pagination_offset: (offset_for, offset) => {
     set((state) => ({
       ...state,
@@ -32,16 +34,20 @@ export const useNotesStore = create<NotesStore>((set, get) => ({
     }))
   },
   set_notes: (notes: Note[]) => {
-    const opened_note_id = notes[0]?.id || null
-
-    set({
+    set((state) => ({
+      ...state,
       notes,
-      opened_note_id,
       pagination_offset: {
         notes: notes.filter(({is_bookmark}) => !is_bookmark).length,
         bookmarks: notes.filter(({is_bookmark}) => is_bookmark).length,
       },
-    })
+    }))
+  },
+  set_opened_note_slug: (slug) => {
+    set((state) => ({
+      ...state,
+      opened_note_slug: slug,
+    }))
   },
   push_notes: (new_notes: Note[]) => {
     set((state) => ({

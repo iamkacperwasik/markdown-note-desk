@@ -2,13 +2,13 @@ import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
 import LoadMoreButton from "components/Sidebar/LoadMoreButton"
 import NewNoteButton from "components/Sidebar/NewNoteButton"
-import Note from "components/Sidebar/Note"
+import NoteLink from "components/Sidebar/NoteLink"
 import Search from "components/Sidebar/Search"
 
 import {useNotesStore} from "stores/NotesStore"
 
 const Sidebar = () => {
-  const {notes, opened_note_id} = useNotesStore()
+  const {notes, opened_note_slug} = useNotesStore()
 
   return (
     <div className="flex h-screen w-1/4 flex-col justify-between bg-zinc-100">
@@ -27,10 +27,10 @@ const Sidebar = () => {
               {notes
                 .filter(({is_bookmark}) => is_bookmark)
                 .map((note) => (
-                  <Note
+                  <NoteLink
                     key={note.id}
                     document={note}
-                    opened={note.id === opened_note_id}
+                    opened={note.title_slug === opened_note_slug}
                   />
                 ))}
             </div>
@@ -44,10 +44,10 @@ const Sidebar = () => {
             {notes
               .filter(({is_bookmark}) => !is_bookmark)
               .map((note) => (
-                <Note
+                <NoteLink
                   key={note.id}
                   document={note}
-                  opened={note.id === opened_note_id}
+                  opened={note.title_slug === opened_note_slug}
                 />
               ))}
 
