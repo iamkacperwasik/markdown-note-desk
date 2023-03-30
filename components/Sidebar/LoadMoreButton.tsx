@@ -23,13 +23,11 @@ const LoadMoreButton: FC<{bookmarked?: boolean}> = ({bookmarked = false}) => {
   }, [bookmarked, pagination_offset.bookmarks, pagination_offset.notes])
 
   useEffect(() => {
-    console.log("check")
     supabase
       .from("notes")
       .select("*", {count: "exact", head: true})
       .eq("is_bookmark", bookmarked)
       .then(({count: notes_count}) => {
-        console.log(notes_count)
         if (notes_count === pagination_offset[offset_for]) {
           set_all_notes_fetched(true)
 
