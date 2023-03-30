@@ -16,6 +16,7 @@ export interface Database {
           id: number
           is_bookmark: boolean
           title: string
+          title_slug: string
           user_id: string
         }
         Insert: {
@@ -24,6 +25,7 @@ export interface Database {
           id?: number
           is_bookmark?: boolean
           title: string
+          title_slug: string
           user_id: string
         }
         Update: {
@@ -32,6 +34,7 @@ export interface Database {
           id?: number
           is_bookmark?: boolean
           title?: string
+          title_slug?: string
           user_id?: string
         }
       }

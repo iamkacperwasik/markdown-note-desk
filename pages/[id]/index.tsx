@@ -3,7 +3,7 @@ import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 import {useEffect} from "react"
 import {Database} from "types/supabase"
-import {fetchNotes} from "utils/fetchNotes"
+import {fetch_notes} from "utils/fetch_notes"
 
 import Sidebar from "components/Sidebar"
 
@@ -36,11 +36,15 @@ const View = ({
   )
 }
 
-// @ts-ignore
-export const getServerSideProps: GetServerSideProps<{
-  notes: Note[]
-  id: string
-}> = async (ctx) => {
+export const getServerSideProps: GetServerSideProps<
+  {
+    notes: Note[]
+    id: string
+  },
+  {
+    id: string
+  }
+> = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
 
   const {
@@ -57,10 +61,7 @@ export const getServerSideProps: GetServerSideProps<{
   }
 
   const {id} = ctx.params!
-
-  console.log({id})
-
-  const notes = await fetchNotes(supabase)
+  const notes = await fetch_notes(supabase)
 
   return {
     props: {

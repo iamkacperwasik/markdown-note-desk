@@ -1,7 +1,7 @@
 import {SupabaseClient} from "@supabase/auth-helpers-nextjs"
 import {Database} from "types/supabase"
 
-export const fetchNotes = async (
+export const fetch_notes = async (
   supabase: SupabaseClient<Database>
 ): Promise<Note[]> => {
   const {data: bookmarks} = await supabase
