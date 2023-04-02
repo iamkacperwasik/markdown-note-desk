@@ -3,8 +3,8 @@ import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 import {useEffect} from "react"
 import {Database} from "types/supabase"
-import {fetch_note_by_slug} from "utils/fetch_note_by_slug"
-import {fetch_notes} from "utils/fetch_notes"
+import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
+import {fetch_notes} from "utils/fetching/fetch_notes"
 
 import Sidebar from "components/Sidebar"
 import Note from "components/View/Note"
@@ -18,7 +18,6 @@ const View = ({
   const {set_notes, set_opened_note_slug} = useNotesStore()
 
   useEffect(() => {
-    console.log({slug})
     set_notes(notes)
     set_opened_note_slug(slug)
   }, [notes, set_notes, set_opened_note_slug, slug])
@@ -34,9 +33,7 @@ const View = ({
       <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
         <Sidebar />
 
-        <div>
-          <Note document={current_open_note} />
-        </div>
+        <Note document={current_open_note} />
       </div>
     </>
   )

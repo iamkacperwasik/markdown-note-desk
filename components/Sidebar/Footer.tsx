@@ -1,4 +1,4 @@
-import LogoutButton from "components/Sidebar/LogoutButton"
+import LogoutButton from "components/Sidebar/Buttons/LogoutButton"
 import ThemeSwitch from "components/Sidebar/ThemeSwitch"
 
 const Footer = () => (

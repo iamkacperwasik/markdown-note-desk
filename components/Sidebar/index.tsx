@@ -1,6 +1,6 @@
+import NewNoteButton from "components/Sidebar/Buttons/NewNoteButton"
 import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
-import NewNoteButton from "components/Sidebar/NewNoteButton"
 import NoteLink from "components/Sidebar/NoteLink"
 import Search from "components/Sidebar/Search"
 
