@@ -4,17 +4,10 @@ import {Database} from "types/supabase"
 export const fetch_notes = async (
   supabase: SupabaseClient<Database>
 ): Promise<Note[]> => {
-  const {data: bookmarks} = await supabase
-    .from("notes")
-    .select("*")
-    .eq("is_bookmark", true)
-    .range(0, 4)
-
   const {data: notes} = await supabase
     .from("notes")
     .select("*")
-    .eq("is_bookmark", false)
-    .range(0, 4)
+    .order("id", {ascending: true})
 
-  return [bookmarks!, notes!].flat()
+  return notes!
 }

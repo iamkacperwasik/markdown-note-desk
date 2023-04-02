@@ -14,7 +14,6 @@ import {useNotesStore} from "stores/NotesStore"
 const View = ({
   notes,
   slug,
-  current_open_note,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const {set_notes, set_opened_note_slug} = useNotesStore()
 
@@ -23,6 +22,8 @@ const View = ({
     set_notes(notes)
     set_opened_note_slug(slug)
   }, [notes, set_notes, set_opened_note_slug, slug])
+
+  const current_open_note = notes.find(({title_slug}) => title_slug === slug)!
 
   return (
     <>
@@ -45,7 +46,6 @@ export const getServerSideProps: GetServerSideProps<
   {
     notes: Note[]
     slug: string
-    current_open_note: Note
   },
   {
     slug: string
@@ -85,7 +85,6 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       notes,
       slug,
-      current_open_note: current_note,
     },
   }
 }

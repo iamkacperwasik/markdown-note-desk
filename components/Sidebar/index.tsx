@@ -1,6 +1,5 @@
 import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
-import LoadMoreButton from "components/Sidebar/LoadMoreButton"
 import NewNoteButton from "components/Sidebar/NewNoteButton"
 import NoteLink from "components/Sidebar/NoteLink"
 import Search from "components/Sidebar/Search"
@@ -34,8 +33,6 @@ const Sidebar = () => {
                   />
                 ))}
             </div>
-
-            <LoadMoreButton bookmarked />
           </div>
 
           <div>
@@ -50,8 +47,6 @@ const Sidebar = () => {
                   opened={note.title_slug === opened_note_slug}
                 />
               ))}
-
-            <LoadMoreButton />
           </div>
         </div>
       </div>
