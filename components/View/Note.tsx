@@ -5,7 +5,9 @@ import {FC, useEffect, useState} from "react"
 import {When} from "react-if"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+import slugify from "slugify"
 import {Database} from "types/supabase"
+import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
 import {format_markdown} from "utils/text/format_markdown"
 
 type NoteState = "VIEWING" | "EDITING" | "DELETING"
@@ -20,6 +22,7 @@ const Note: FC<{
   const [note_content, set_note_content] = useState<string>(
     document.content || ""
   )
+  const [new_title, set_new_title] = useState(document.title)
 
   const is_content_untouched = note_content === document.content
 
@@ -27,14 +30,14 @@ const Note: FC<{
     const formatted_content = format_markdown(document.content || "")
 
     set_note_content(formatted_content)
+    set_new_title(document.title)
     set_note_state("VIEWING")
-  }, [document.content])
+  }, [document.content, document.title])
 
   return (
     <div className="h-screen w-full overflow-auto px-4">
-      <h1>{document.title}</h1>
-
       <When condition={note_state === "VIEWING"}>
+        <h1>{document.title}</h1>
         <ReactMarkdown children={note_content} remarkPlugins={[remarkGfm]} />
 
         <button onClick={() => set_note_state("EDITING")}>Edit</button>
@@ -42,6 +45,13 @@ const Note: FC<{
       </When>
 
       <When condition={note_state === "EDITING"}>
+        <input
+          type="text"
+          value={new_title}
+          onChange={({target}) => {
+            set_new_title(target.value)
+          }}
+        />
         <div className="flex h-full gap-4">
           <div className="flex w-1/2 flex-col">
             <textarea
@@ -61,21 +71,50 @@ const Note: FC<{
             </button>
 
             <button
-              disabled={is_content_untouched}
-              onClick={() => {
-                if (!is_content_untouched) {
+              disabled={is_content_untouched && new_title === document.title}
+              onClick={async () => {
+                if (new_title === "") return
+
+                const title_changed = new_title !== document.title
+                const new_title_slug = slugify(new_title, {
+                  replacement: "-",
+                  lower: true,
+                  strict: true,
+                  trim: true,
+                })
+
+                if (title_changed) {
+                  const existing_note = await fetch_note_by_slug(
+                    supabaseClient,
+                    new_title_slug
+                  )
+
+                  if (existing_note) {
+                    return
+                  }
+                }
+
+                if (!is_content_untouched || title_changed) {
                   const formatted_content = format_markdown(note_content)
 
-                  supabaseClient
+                  await supabaseClient
                     .from("notes")
-                    .update({content: formatted_content})
-                    .eq("id", document.id)
-                    .then(() => {
-                      console.log("updated", document.id)
-
-                      document.content = note_content
-                      set_note_state("VIEWING")
+                    .update({
+                      content: formatted_content,
+                      title: new_title,
+                      title_slug: new_title_slug,
                     })
+                    .eq("id", document.id)
+
+                  document.content = note_content
+                  document.title = new_title
+                  document.title_slug = new_title_slug
+
+                  if (title_changed) {
+                    router.replace(new_title_slug)
+                  } else {
+                    set_note_state("VIEWING")
+                  }
                 }
               }}
             >
@@ -99,6 +138,7 @@ const Note: FC<{
         </div>
       </When>
       <When condition={note_state === "DELETING"}>
+        <h1>{document.title}</h1>
         <button
           onClick={() => {
             supabaseClient
