@@ -23,16 +23,19 @@ const Note: FC<{
     document.content || ""
   )
   const [new_title, set_new_title] = useState(document.title)
+  const [share_note, set_share_note] = useState(document.shared)
 
   const is_content_untouched = note_content === document.content
+  const is_share_note_untouched = share_note === document.shared
 
   useEffect(() => {
     const formatted_content = format_markdown(document.content || "")
 
     set_note_content(formatted_content)
     set_new_title(document.title)
+    set_share_note(document.shared)
     set_note_state("VIEWING")
-  }, [document.content, document.title])
+  }, [document.content, document.title, document.shared])
 
   return (
     <div className="h-screen w-full overflow-auto px-4">
@@ -60,6 +63,16 @@ const Note: FC<{
               value={note_content}
             />
 
+            <label>
+              <p>Share this note?</p>
+              <input
+                type="checkbox"
+                checked={share_note}
+                onChange={({target}) => set_share_note(target.checked)}
+              />
+              <span>Save to see changes</span>
+            </label>
+
             <button
               onClick={() => {
                 const formatted_content = format_markdown(note_content)
@@ -71,7 +84,11 @@ const Note: FC<{
             </button>
 
             <button
-              disabled={is_content_untouched && new_title === document.title}
+              disabled={
+                is_content_untouched &&
+                new_title === document.title &&
+                is_share_note_untouched
+              }
               onClick={async () => {
                 if (new_title === "") return
 
@@ -94,7 +111,11 @@ const Note: FC<{
                   }
                 }
 
-                if (!is_content_untouched || title_changed) {
+                if (
+                  !is_content_untouched ||
+                  title_changed ||
+                  !is_share_note_untouched
+                ) {
                   const formatted_content = format_markdown(note_content)
 
                   await supabaseClient
@@ -103,12 +124,14 @@ const Note: FC<{
                       content: formatted_content,
                       title: new_title,
                       title_slug: new_title_slug,
+                      shared: share_note,
                     })
                     .eq("id", document.id)
 
                   document.content = note_content
                   document.title = new_title
                   document.title_slug = new_title_slug
+                  document.shared = share_note
 
                   if (title_changed) {
                     router.replace(new_title_slug)
@@ -122,6 +145,7 @@ const Note: FC<{
             </button>
             <button
               onClick={() => {
+                set_share_note(document.shared)
                 set_note_content(document.content!)
                 set_note_state("VIEWING")
               }}

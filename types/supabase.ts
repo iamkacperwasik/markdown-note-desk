@@ -15,27 +15,33 @@ export interface Database {
           created_at: string
           id: number
           is_bookmark: boolean
+          shared: boolean
           title: string
           title_slug: string
           user_id: string
+          views: number
         }
         Insert: {
           content?: string | null
           created_at?: string
           id?: number
           is_bookmark?: boolean
+          shared?: boolean
           title: string
           title_slug: string
           user_id: string
+          views?: number
         }
         Update: {
           content?: string | null
           created_at?: string
           id?: number
           is_bookmark?: boolean
+          shared?: boolean
           title?: string
           title_slug?: string
           user_id?: string
+          views?: number
         }
       }
     }
