@@ -1,3 +1,6 @@
+import Fuse from "fuse.js"
+import {useEffect, useMemo} from "react"
+
 import NewNoteButton from "components/Sidebar/Buttons/NewNoteButton"
 import Footer from "components/Sidebar/Footer"
 import Heading from "components/Sidebar/Heading"
@@ -7,7 +10,24 @@ import Search from "components/Sidebar/Search"
 import {useNotesStore} from "stores/NotesStore"
 
 const Sidebar = () => {
-  const {notes, opened_note_slug} = useNotesStore()
+  const {notes, opened_note_slug, search} = useNotesStore()
+
+  const filtered_notes = useMemo(() => {
+    if (search) {
+      const options = {
+        includeScore: false,
+        keys: ["title", "content"],
+      }
+
+      const fuse = new Fuse(notes, options)
+
+      const result = fuse.search(search)
+
+      return result.map((v) => v.item)
+    }
+
+    return notes
+  }, [notes, search])
 
   return (
     <div className="flex h-screen w-1/4 flex-col justify-between bg-zinc-100">
@@ -23,7 +43,7 @@ const Sidebar = () => {
             <Heading>Bookmarks</Heading>
 
             <div>
-              {notes
+              {filtered_notes
                 .filter(({is_bookmark}) => is_bookmark)
                 .map((note) => (
                   <NoteLink
@@ -38,7 +58,7 @@ const Sidebar = () => {
           <div>
             <Heading>Notes</Heading>
 
-            {notes
+            {filtered_notes
               .filter(({is_bookmark}) => !is_bookmark)
               .map((note) => (
                 <NoteLink

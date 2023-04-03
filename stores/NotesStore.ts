@@ -7,6 +7,9 @@ export type NotesStore = {
 
   opened_note_slug: Note["title_slug"] | null
   set_opened_note_slug: (slug: Note["title_slug"]) => void
+
+  search: string | null
+  set_search: (search: NotesStore["search"]) => void
 }
 
 export const useNotesStore = create<NotesStore>((set) => ({
@@ -33,6 +36,14 @@ export const useNotesStore = create<NotesStore>((set) => ({
     set((state) => ({
       ...state,
       opened_note_slug: slug,
+    }))
+  },
+
+  search: null,
+  set_search: (search) => {
+    set((state) => ({
+      ...state,
+      search,
     }))
   },
 }))
