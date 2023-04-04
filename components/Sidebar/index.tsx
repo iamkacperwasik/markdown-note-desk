@@ -1,5 +1,5 @@
 import Fuse from "fuse.js"
-import {useEffect, useMemo} from "react"
+import {useMemo} from "react"
 
 import NewNoteButton from "components/Sidebar/Buttons/NewNoteButton"
 import Footer from "components/Sidebar/Footer"
