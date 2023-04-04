@@ -1,4 +1,5 @@
 import {SupabaseClient} from "@supabase/auth-helpers-nextjs"
+
 import {Database} from "types/supabase"
 
 export const fetch_first_note_slug = async (

@@ -1,9 +1,11 @@
 /* eslint-disable react/no-children-prop */
-import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
+
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
+
 import {Database} from "types/supabase"
 
 const View = ({

@@ -1,12 +1,15 @@
 /* eslint-disable react/no-children-prop */
-import {useSupabaseClient} from "@supabase/auth-helpers-react"
 import {useRouter} from "next/router"
 import {FC, useEffect, useState} from "react"
 import {When} from "react-if"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 import slugify from "slugify"
+
+import {useSupabaseClient} from "@supabase/auth-helpers-react"
+
 import {Database} from "types/supabase"
+
 import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
 import {format_markdown} from "utils/text/format_markdown"
 

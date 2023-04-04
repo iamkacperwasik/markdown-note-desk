@@ -1,7 +1,10 @@
-import {useSupabaseClient} from "@supabase/auth-helpers-react"
 import {useRouter} from "next/router"
 import {CiSquarePlus} from "react-icons/ci"
+
+import {useSupabaseClient} from "@supabase/auth-helpers-react"
+
 import {Database} from "types/supabase"
+
 import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
 
 const NewNoteButton = () => {
@@ -12,9 +15,14 @@ const NewNoteButton = () => {
     <div
       className="flex cursor-pointer items-center gap-2 py-4"
       onClick={async () => {
+        const {
+          data: {user},
+        } = await supabaseClient.auth.getUser()
+
         const existing_note = await fetch_note_by_slug(
           supabaseClient,
-          "empty-note"
+          "empty-note",
+          user!.id
         )
 
         if (existing_note) {
@@ -22,10 +30,6 @@ const NewNoteButton = () => {
 
           return
         }
-
-        const {
-          data: {user},
-        } = await supabaseClient.auth.getUser()
 
         await supabaseClient.from("notes").insert({
           title: "Empty note!",

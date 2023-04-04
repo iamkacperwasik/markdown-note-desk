@@ -42,9 +42,10 @@
   },
   "prettier": {
     "importOrder": [
+      "^@supabase/(.*)$",
+      "^types/(.*)$",
       "^components/(.*)$",
-      "^hooks/(.*)$",
-      "^util/(.*)$",
+      "^utils/(.*)$",
       "^stores/(.*)$",
       "^[./]"
     ],

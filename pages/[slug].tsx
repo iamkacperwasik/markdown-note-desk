@@ -1,13 +1,16 @@
-import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
 import {useEffect} from "react"
+
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
+
 import {Database} from "types/supabase"
-import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
-import {fetch_notes} from "utils/fetching/fetch_notes"
 
 import Sidebar from "components/Sidebar"
 import Note from "components/View/Note"
+
+import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
+import {fetch_notes} from "utils/fetching/fetch_notes"
 
 import {useNotesStore} from "stores/NotesStore"
 

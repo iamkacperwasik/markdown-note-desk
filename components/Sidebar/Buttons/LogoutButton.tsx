@@ -1,6 +1,7 @@
-import {createBrowserSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import {useRouter} from "next/router"
 import {SlLogout} from "react-icons/sl"
+
+import {createBrowserSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 const LogoutButton = () => {
   const supabaseClient = createBrowserSupabaseClient()
