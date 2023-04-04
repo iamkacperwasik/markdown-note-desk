@@ -1,29 +1,14 @@
+/* eslint-disable react/no-children-prop */
 import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
-import {useEffect} from "react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 import {Database} from "types/supabase"
-import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
-import {fetch_notes} from "utils/fetching/fetch_notes"
-
-import Sidebar from "components/Sidebar"
-import Note from "components/View/Note"
-
-import {useNotesStore} from "stores/NotesStore"
 
 const View = ({
-  notes,
-  slug,
+  note,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const {set_notes, set_opened_note_slug} = useNotesStore()
-
-  useEffect(() => {
-    set_notes(notes)
-    set_opened_note_slug(slug)
-  }, [notes, set_notes, set_opened_note_slug, slug])
-
-  const current_open_note = notes.find(({title_slug}) => title_slug === slug)!
-
   return (
     <>
       <Head>
@@ -31,9 +16,11 @@ const View = ({
       </Head>
 
       <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
-        <Sidebar />
-
-        <Note document={current_open_note} />
+        <h1>{note.title}</h1>
+        <ReactMarkdown
+          children={note.content || ""}
+          remarkPlugins={[remarkGfm]}
+        />
       </div>
     </>
   )
@@ -41,11 +28,11 @@ const View = ({
 
 export const getServerSideProps: GetServerSideProps<
   {
-    notes: Note[]
-    slug: string
+    note: Note
   },
   {
     slug: string
+    userid: string
   }
 > = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
@@ -63,10 +50,14 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  const {slug} = ctx.params!
-  const user_id = session.user.id
+  const {slug, userid} = ctx.params!
 
-  const current_note = await fetch_note_by_slug(supabase, slug, user_id)
+  const {data: current_note} = await supabase
+    .from("notes")
+    .select("*")
+    .eq("title_slug", slug)
+    .eq("user_id", userid)
+    .single()
 
   if (!current_note) {
     return {
@@ -77,12 +68,9 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  const notes = await fetch_notes(supabase, user_id)
-
   return {
     props: {
-      notes,
-      slug,
+      note: current_note,
     },
   }
 }

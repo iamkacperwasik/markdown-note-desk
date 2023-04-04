@@ -40,7 +40,8 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  const title_slug = await fetch_first_note_slug(supabase)
+  const user_id = session.user.id
+  const title_slug = await fetch_first_note_slug(supabase, user_id)
 
   return {
     redirect: {
