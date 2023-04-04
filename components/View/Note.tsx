@@ -100,10 +100,13 @@ const Note: FC<{
                   trim: true,
                 })
 
+                const user = await supabaseClient.auth.getUser()
+
                 if (title_changed) {
                   const existing_note = await fetch_note_by_slug(
                     supabaseClient,
-                    new_title_slug
+                    new_title_slug,
+                    user.data.user!.id
                   )
 
                   if (existing_note) {
