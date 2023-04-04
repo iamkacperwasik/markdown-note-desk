@@ -7,7 +7,7 @@ import {Database} from "types/supabase"
 
 import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
 
-const NewNoteButton = () => {
+export default function NewNoteButton() {
   const supabaseClient = useSupabaseClient<Database>()
   const router = useRouter()
 
@@ -50,5 +50,3 @@ const NewNoteButton = () => {
     </div>
   )
 }
-
-export default NewNoteButton

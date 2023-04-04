@@ -12,7 +12,7 @@ export type NotesStore = {
   set_search: (search: NotesStore["search"]) => void
 }
 
-export const useNotesStore = create<NotesStore>((set) => ({
+export default create<NotesStore>((set) => ({
   notes: [],
   set_notes: (notes: Note[]) => {
     set((state) => ({

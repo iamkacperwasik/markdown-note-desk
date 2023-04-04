@@ -2,10 +2,10 @@ import {SupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-export const fetch_first_note_slug = async (
+export default async function fetch_first_note_slug(
   supabase: SupabaseClient<Database>,
   user_id: string
-): Promise<string> => {
+): Promise<string> {
   const {data} = await supabase
     .from("notes")
     .select("title_slug")

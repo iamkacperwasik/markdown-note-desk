@@ -5,7 +5,10 @@ import "styles/globals.css"
 import {createBrowserSupabaseClient} from "@supabase/auth-helpers-nextjs"
 import {Session, SessionContextProvider} from "@supabase/auth-helpers-react"
 
-function MyApp({Component, pageProps}: AppProps<{initialSession: Session}>) {
+export default function MyApp({
+  Component,
+  pageProps,
+}: AppProps<{initialSession: Session}>) {
   const [supabase_client] = useState(() => createBrowserSupabaseClient())
 
   return (
@@ -17,5 +20,3 @@ function MyApp({Component, pageProps}: AppProps<{initialSession: Session}>) {
     </SessionContextProvider>
   )
 }
-
-export default MyApp

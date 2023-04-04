@@ -15,9 +15,10 @@ import {format_markdown} from "utils/text/format_markdown"
 
 type NoteState = "VIEWING" | "EDITING" | "DELETING"
 
-const Note: FC<{
+type Props = {
   document: Note
-}> = ({document}) => {
+}
+export default function Note({document}: Props) {
   const supabaseClient = useSupabaseClient<Database>()
   const router = useRouter()
 
@@ -194,5 +195,3 @@ const Note: FC<{
     </div>
   )
 }
-
-export default Note

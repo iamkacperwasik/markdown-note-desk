@@ -7,9 +7,9 @@ import Heading from "components/Sidebar/Heading"
 import NoteLink from "components/Sidebar/NoteLink"
 import Search from "components/Sidebar/Search"
 
-import {useNotesStore} from "stores/NotesStore"
+import useNotesStore from "stores/NotesStore"
 
-const Sidebar = () => {
+export default function Sidebar() {
   const {notes, opened_note_slug, search} = useNotesStore()
 
   const filtered_notes = useMemo(() => {
@@ -85,5 +85,3 @@ const Sidebar = () => {
     </div>
   )
 }
-
-export default Sidebar

@@ -2,9 +2,9 @@ import {debounce} from "debounce"
 import {ChangeEvent, useEffect, useMemo} from "react"
 import {MdSearch} from "react-icons/md"
 
-import {useNotesStore} from "stores/NotesStore"
+import useNotesStore from "stores/NotesStore"
 
-const Search = () => {
+export default function Search() {
   const {set_search} = useNotesStore()
 
   const debounced_set_search = useMemo(() => {
@@ -38,5 +38,3 @@ const Search = () => {
     </label>
   )
 }
-
-export default Search

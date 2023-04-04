@@ -12,35 +12,7 @@ import Note from "components/View/Note"
 import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
 import {fetch_notes} from "utils/fetching/fetch_notes"
 
-import {useNotesStore} from "stores/NotesStore"
-
-const View = ({
-  notes,
-  slug,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const {set_notes, set_opened_note_slug} = useNotesStore()
-
-  useEffect(() => {
-    set_notes(notes)
-    set_opened_note_slug(slug)
-  }, [notes, set_notes, set_opened_note_slug, slug])
-
-  const current_open_note = notes.find(({title_slug}) => title_slug === slug)!
-
-  return (
-    <>
-      <Head>
-        <meta name="robots" content="noindex" />
-      </Head>
-
-      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
-        <Sidebar />
-
-        <Note document={current_open_note} />
-      </div>
-    </>
-  )
-}
+import useNotesStore from "stores/NotesStore"
 
 export const getServerSideProps: GetServerSideProps<
   {
@@ -90,4 +62,30 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default View
+export default function NotePage({
+  notes,
+  slug,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const {set_notes, set_opened_note_slug} = useNotesStore()
+
+  useEffect(() => {
+    set_notes(notes)
+    set_opened_note_slug(slug)
+  }, [notes, set_notes, set_opened_note_slug, slug])
+
+  const current_open_note = notes.find(({title_slug}) => title_slug === slug)!
+
+  return (
+    <>
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
+
+      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
+        <Sidebar />
+
+        <Note document={current_open_note} />
+      </div>
+    </>
+  )
+}

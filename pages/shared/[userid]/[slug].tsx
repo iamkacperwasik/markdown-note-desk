@@ -8,26 +8,6 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-const View = ({
-  note,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  return (
-    <>
-      <Head>
-        <meta name="robots" content="noindex" />
-      </Head>
-
-      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
-        <h1>{note.title}</h1>
-        <ReactMarkdown
-          children={note.content || ""}
-          remarkPlugins={[remarkGfm]}
-        />
-      </div>
-    </>
-  )
-}
-
 export const getServerSideProps: GetServerSideProps<
   {
     note: Note
@@ -85,4 +65,22 @@ export const getServerSideProps: GetServerSideProps<
   }
 }
 
-export default View
+export default function SharedNotePage({
+  note,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <>
+      <Head>
+        <meta name="robots" content="noindex" />
+      </Head>
+
+      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
+        <h1>{note.title}</h1>
+        <ReactMarkdown
+          children={note.content || ""}
+          remarkPlugins={[remarkGfm]}
+        />
+      </div>
+    </>
+  )
+}
