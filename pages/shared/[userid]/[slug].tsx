@@ -68,6 +68,14 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
+  await supabase
+    .from("notes")
+    .update({
+      views: current_note.views + 1,
+    })
+    .eq("title_slug", slug)
+    .eq("user_id", userid)
+
   return {
     props: {
       note: current_note,
