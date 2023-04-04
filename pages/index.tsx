@@ -24,10 +24,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     .select("*", {count: "exact", head: true})
 
   if (notes_count === 0) {
+    await supabase.from("notes").insert({
+      title: "Empty note!",
+      title_slug: "empty-note",
+      user_id: session.user.id,
+      content: "# Empty note",
+      is_bookmark: false,
+    })
+
     return {
       redirect: {
         permanent: false,
-        destination: "/welcome-to-markdown-notes-app",
+        destination: "/empty-note",
       },
     }
   }
