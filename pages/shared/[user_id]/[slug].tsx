@@ -14,7 +14,7 @@ export const getServerSideProps: GetServerSideProps<
   },
   {
     slug: string
-    userid: string
+    user_id: string
   }
 > = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
@@ -32,13 +32,13 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  const {slug, userid} = ctx.params!
+  const {slug, user_id} = ctx.params!
 
   const {data: current_note} = await supabase
     .from("notes")
     .select("*")
     .eq("title_slug", slug)
-    .eq("user_id", userid)
+    .eq("user_id", user_id)
     .single()
 
   if (!current_note) {
@@ -56,7 +56,7 @@ export const getServerSideProps: GetServerSideProps<
       views: current_note.views + 1,
     })
     .eq("title_slug", slug)
-    .eq("user_id", userid)
+    .eq("user_id", user_id)
 
   return {
     props: {

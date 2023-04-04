@@ -4,11 +4,11 @@ import {SlLogout} from "react-icons/sl"
 import {createBrowserSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 export default function LogoutButton() {
-  const supabaseClient = createBrowserSupabaseClient()
+  const supabase = createBrowserSupabaseClient()
   const router = useRouter()
 
   const logout = () => {
-    supabaseClient.auth.signOut().then(() => {
+    supabase.auth.signOut().then(() => {
       router.replace("/login")
     })
   }

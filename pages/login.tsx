@@ -29,14 +29,14 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 }
 
 export default function LoginPage() {
-  const supabaseClient = createBrowserSupabaseClient()
+  const supabase = createBrowserSupabaseClient()
   const router = useRouter()
 
   useEffect(() => {
-    supabaseClient.auth.onAuthStateChange((event) => {
+    supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_IN") router.reload()
     })
-  }, [router, supabaseClient.auth])
+  }, [router, supabase.auth])
 
   return (
     <>
@@ -46,7 +46,7 @@ export default function LoginPage() {
 
       <div className="flex h-screen items-center justify-center bg-zinc-100">
         <Auth
-          supabaseClient={supabaseClient}
+          supabaseClient={supabase}
           providers={[]}
           appearance={{
             extend: false,

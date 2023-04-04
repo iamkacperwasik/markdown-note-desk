@@ -10,8 +10,8 @@ import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
 import {Database} from "types/supabase"
 
-import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
-import {format_markdown} from "utils/text/format_markdown"
+import fetch_note_by_slug from "utils/fetching/fetch_note_by_slug"
+import format_markdown from "utils/text/format_markdown"
 
 type NoteState = "VIEWING" | "EDITING" | "DELETING"
 
@@ -19,7 +19,7 @@ type Props = {
   document: Note
 }
 export default function Note({document}: Props) {
-  const supabaseClient = useSupabaseClient<Database>()
+  const supabase = useSupabaseClient<Database>()
   const router = useRouter()
 
   const [note_state, set_note_state] = useState<NoteState>("VIEWING")
@@ -104,11 +104,11 @@ export default function Note({document}: Props) {
                   trim: true,
                 })
 
-                const user = await supabaseClient.auth.getUser()
+                const user = await supabase.auth.getUser()
 
                 if (title_changed) {
                   const existing_note = await fetch_note_by_slug(
-                    supabaseClient,
+                    supabase,
                     new_title_slug,
                     user.data.user!.id
                   )
@@ -125,7 +125,7 @@ export default function Note({document}: Props) {
                 ) {
                   const formatted_content = format_markdown(note_content)
 
-                  await supabaseClient
+                  await supabase
                     .from("notes")
                     .update({
                       content: formatted_content,
@@ -172,7 +172,7 @@ export default function Note({document}: Props) {
         <h1>{document.title}</h1>
         <button
           onClick={() => {
-            supabaseClient
+            supabase
               .from("notes")
               .delete()
               .eq("id", document.id)

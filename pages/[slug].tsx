@@ -9,10 +9,10 @@ import {Database} from "types/supabase"
 import Sidebar from "components/Sidebar"
 import Note from "components/View/Note"
 
-import {fetch_note_by_slug} from "utils/fetching/fetch_note_by_slug"
-import {fetch_notes} from "utils/fetching/fetch_notes"
+import fetch_note_by_slug from "utils/fetching/fetch_note_by_slug"
+import fetch_notes from "utils/fetching/fetch_notes"
 
-import useNotesStore from "stores/NotesStore"
+import useNotesStore from "stores/notes_store"
 
 export const getServerSideProps: GetServerSideProps<
   {

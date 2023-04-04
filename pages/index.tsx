@@ -4,7 +4,7 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-import {fetch_first_note_slug} from "utils/fetching/fetch_first_note_slug"
+import fetch_first_note_slug from "utils/fetching/fetch_first_note_slug"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
