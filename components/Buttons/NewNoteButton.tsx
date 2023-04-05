@@ -1,5 +1,4 @@
 import {useRouter} from "next/router"
-import {CiSquarePlus} from "react-icons/ci"
 
 import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
@@ -37,15 +36,11 @@ export default function NewNoteButton() {
   }
 
   return (
-    <div
-      className="flex cursor-pointer items-center gap-2 py-4"
+    <button
+      className="mb-4 flex items-center gap-2 hover:underline"
       onClick={create_new_note}
     >
-      <CiSquarePlus className="text-2xl text-sky-600" />
-
-      <p className="text-bold text-md w-full py-[4px] font-medium text-sky-600">
-        Add Note
-      </p>
-    </div>
+      New Note
+    </button>
   )
 }

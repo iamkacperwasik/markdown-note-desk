@@ -1,26 +1,29 @@
-/* eslint-disable react/no-children-prop */
 import {useRouter} from "next/router"
 import {useEffect, useState} from "react"
 import {When} from "react-if"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
 import slugify from "slugify"
 
 import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
 import {Database} from "types/supabase"
 
+import DeletingPanel from "components/Panel/DeletingPanel"
+import EditingPanel from "components/Panel/EditingPanel"
+import Sidebar from "components/Panel/Sidebar"
+import ViewingPanel from "components/Panel/ViewingPanel"
+import MarkdownPreview from "components/View/MarkdownPreview"
+
 import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 import format_markdown from "utils/text/format_markdown"
 
-type NoteState = "VIEWING" | "EDITING" | "DELETING"
+import useNotesStore from "stores/notes_store"
 
-type Props = {
-  note: Note
-}
-export default function Note({note}: Props) {
+export default function Layout() {
+  const {notes, opened_note_slug} = useNotesStore()
   const supabase = useSupabaseClient<Database>()
   const router = useRouter()
+
+  const note = notes.find(({title_slug}) => title_slug === opened_note_slug)!
 
   const [note_state, set_note_state] = useState<NoteState>("VIEWING")
   const [note_content, set_note_content] = useState<string>(note.content || "")
@@ -130,71 +133,60 @@ export default function Note({note}: Props) {
     },
   }
 
+  const is_data_untouched =
+    new_title === note.title && is_untouched.content && is_untouched.share
+
   return (
-    <div className="h-screen w-full overflow-auto px-4">
-      <When condition={note_state === "VIEWING"}>
-        <h1>{note.title}</h1>
-        <ReactMarkdown children={note_content} remarkPlugins={[remarkGfm]} />
+    <div className="flex h-screen gap-4 bg-[#111111f9] px-10 pt-10 text-white">
+      <Sidebar />
 
-        <button onClick={change_state.to_editing}>Edit</button>
-        <button onClick={change_state.to_deleting}>Delete</button>
-      </When>
+      <div className="relative w-full overflow-y-auto overflow-x-hidden scroll-smooth">
+        <When condition={note_state === "VIEWING"}>
+          <ViewingPanel
+            title={note.title}
+            change_state_to_deleting={change_state.to_deleting}
+            change_state_to_editing={change_state.to_editing}
+          />
 
-      <When condition={note_state === "EDITING"}>
-        <input
-          type="text"
-          value={new_title}
-          onChange={({target}) => {
-            set_new_title(target.value)
-          }}
-        />
-        <div className="flex h-full gap-4">
-          <div className="flex w-1/2 flex-col">
+          <div className="w-full bg-[#111111f9] p-4">
+            <MarkdownPreview content={note_content} />
+          </div>
+        </When>
+
+        <When condition={note_state === "EDITING"}>
+          <EditingPanel
+            title={note.title}
+            back_to_viewing={back_to_viewing.from_editing}
+            format_note={note_actions.format}
+            save_note={note_actions.edit}
+            is_data_untouched={is_data_untouched}
+            set_share_note={set_share_note}
+            share_note={share_note}
+          />
+
+          <div className="flex w-full gap-8 bg-[#111111f9] p-4">
             <textarea
-              className="h-2/3 resize-none py-10"
-              onChange={({target}) => set_note_content(target.value)}
+              className="w-1/2 bg-transparent"
               value={note_content}
+              onChange={({target}) => set_note_content(target.value)}
             />
 
-            <label>
-              <p>Share this note?</p>
-              <input
-                type="checkbox"
-                checked={share_note}
-                onChange={({target}) => set_share_note(target.checked)}
-              />
-              <span>Save to see changes</span>
-            </label>
-
-            <button onClick={note_actions.format}>Format</button>
-
-            <button
-              disabled={
-                new_title === note.title &&
-                is_untouched.content &&
-                is_untouched.share
-              }
-              onClick={note_actions.edit}
-            >
-              Save
-            </button>
-            <button onClick={back_to_viewing.from_editing}>
-              Cancel editing
-            </button>
+            <MarkdownPreview content={note_content} />
           </div>
+        </When>
 
-          <ReactMarkdown
-            children={note_content}
-            remarkPlugins={[remarkGfm]}
-            className="w-1/2"
+        <When condition={note_state === "DELETING"}>
+          <DeletingPanel
+            title={note.title}
+            back_to_viewing={back_to_viewing.from_deleting}
+            delete_note={note_actions.delete}
           />
-        </div>
-      </When>
-      <When condition={note_state === "DELETING"}>
-        <h1>{note.title}</h1>
-        <button onClick={note_actions.delete}>Delete</button>
-        <button onClick={back_to_viewing.from_deleting}>Cancel</button>
-      </When>
+
+          <div className="w-full bg-[#111111f9] p-4">
+            <MarkdownPreview content={note_content} />
+          </div>
+        </When>
+      </div>
     </div>
   )
 }

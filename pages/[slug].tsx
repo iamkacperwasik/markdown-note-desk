@@ -6,8 +6,7 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-import Sidebar from "components/Sidebar"
-import Note from "components/View/Note"
+import Layout from "components/View/Layout"
 
 import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 import fetch_notes from "utils/supabase/fetch_notes"
@@ -73,19 +72,13 @@ export default function NotePage({
     set_opened_note_slug(slug)
   }, [notes, set_notes, set_opened_note_slug, slug])
 
-  const current_open_note = notes.find(({title_slug}) => title_slug === slug)!
-
   return (
     <>
       <Head>
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
-        <Sidebar />
-
-        <Note note={current_open_note} />
-      </div>
+      <Layout />
     </>
   )
 }

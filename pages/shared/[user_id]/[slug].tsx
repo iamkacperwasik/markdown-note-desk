@@ -1,19 +1,21 @@
 /* eslint-disable react/no-children-prop */
 import type {GetServerSideProps, InferGetServerSidePropsType} from "next"
 import Head from "next/head"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
 
 import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
+
+import SimpleInfoPanel from "components/Panel/SimpleInfoPanel"
+import MarkdownPreview from "components/View/MarkdownPreview"
 
 import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 import increment_note_views from "utils/supabase/increment_note_views"
 
 export const getServerSideProps: GetServerSideProps<
   {
-    note: Note
+    title: string
+    content: string
   },
   {
     slug: string
@@ -55,13 +57,15 @@ export const getServerSideProps: GetServerSideProps<
 
   return {
     props: {
-      note: current_note,
+      title: current_note.title,
+      content: current_note.content || "",
     },
   }
 }
 
 export default function SharedNotePage({
-  note,
+  title,
+  content,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
     <>
@@ -69,13 +73,12 @@ export default function SharedNotePage({
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
-        <h1>{note.title}</h1>
-        <ReactMarkdown
-          children={note.content || ""}
-          remarkPlugins={[remarkGfm]}
-        />
-        <p>Views: {note.views}</p>
+      <div className="w-full gap-4 scroll-smooth bg-[#111111f9] px-10 pt-10 text-white">
+        <SimpleInfoPanel title={title} />
+
+        <div className="w-full bg-[#111111f9] p-4">
+          <MarkdownPreview content={content || ""} />
+        </div>
       </div>
     </>
   )
