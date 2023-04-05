@@ -1,6 +1,6 @@
 /* eslint-disable react/no-children-prop */
 import {useRouter} from "next/router"
-import {FC, useEffect, useState} from "react"
+import {useEffect, useState} from "react"
 import {When} from "react-if"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -16,39 +16,128 @@ import format_markdown from "utils/text/format_markdown"
 type NoteState = "VIEWING" | "EDITING" | "DELETING"
 
 type Props = {
-  document: Note
+  note: Note
 }
-export default function Note({document}: Props) {
+export default function Note({note}: Props) {
   const supabase = useSupabaseClient<Database>()
   const router = useRouter()
 
   const [note_state, set_note_state] = useState<NoteState>("VIEWING")
-  const [note_content, set_note_content] = useState<string>(
-    document.content || ""
-  )
-  const [new_title, set_new_title] = useState(document.title)
-  const [share_note, set_share_note] = useState(document.shared)
+  const [note_content, set_note_content] = useState<string>(note.content || "")
+  const [new_title, set_new_title] = useState(note.title)
+  const [share_note, set_share_note] = useState(note.shared)
 
-  const is_content_untouched = note_content === document.content
-  const is_share_note_untouched = share_note === document.shared
+  const is_untouched = {
+    content: note_content === note.content,
+    share: share_note === note.shared,
+  }
 
   useEffect(() => {
-    const formatted_content = format_markdown(document.content || "")
+    const formatted_content = format_markdown(note.content || "")
 
     set_note_content(formatted_content)
-    set_new_title(document.title)
-    set_share_note(document.shared)
-    set_note_state("VIEWING")
-  }, [document.content, document.title, document.shared])
+    set_new_title(note.title)
+    set_share_note(note.shared)
+    change_state.to_viewing()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [note.content, note.title, note.shared])
+
+  const change_state = {
+    to_viewing: function () {
+      set_note_state("VIEWING")
+    },
+    to_editing: function () {
+      set_note_state("EDITING")
+    },
+    to_deleting: function () {
+      set_note_state("DELETING")
+    },
+  }
+
+  const back_to_viewing = {
+    from_editing: function () {
+      set_share_note(note.shared)
+      set_note_content(note.content!)
+
+      change_state.to_viewing()
+    },
+    from_deleting: function () {
+      change_state.to_viewing()
+    },
+  }
+
+  const note_actions = {
+    format: function () {
+      const formatted_content = format_markdown(note_content)
+
+      set_note_content(formatted_content)
+    },
+    edit: async function () {
+      if (new_title === "") return
+
+      const title_changed = new_title !== note.title
+      const new_title_slug = slugify(new_title, {
+        replacement: "-",
+        lower: true,
+        strict: true,
+        trim: true,
+      })
+
+      const user = await supabase.auth.getUser()
+
+      if (title_changed) {
+        const existing_note = await fetch_note_by_slug(
+          supabase,
+          new_title_slug,
+          user.data.user!.id
+        )
+
+        if (existing_note) {
+          return
+        }
+      }
+
+      if (title_changed || !is_untouched.content || !is_untouched.share) {
+        const formatted_content = format_markdown(note_content)
+
+        await supabase
+          .from("notes")
+          .update({
+            content: formatted_content,
+            title: new_title,
+            title_slug: new_title_slug,
+            shared: share_note,
+          })
+          .eq("id", note.id)
+
+        note.content = note_content
+        note.title = new_title
+        note.title_slug = new_title_slug
+        note.shared = share_note
+
+        if (title_changed) {
+          router.replace(new_title_slug)
+        } else {
+          set_note_state("VIEWING")
+        }
+      }
+    },
+    delete: async function () {
+      await supabase.from("notes").delete().eq("id", note.id)
+
+      router.replace("/")
+    },
+  }
 
   return (
     <div className="h-screen w-full overflow-auto px-4">
       <When condition={note_state === "VIEWING"}>
-        <h1>{document.title}</h1>
+        <h1>{note.title}</h1>
         <ReactMarkdown children={note_content} remarkPlugins={[remarkGfm]} />
 
-        <button onClick={() => set_note_state("EDITING")}>Edit</button>
-        <button onClick={() => set_note_state("DELETING")}>Delete</button>
+        <button onClick={change_state.to_editing}>Edit</button>
+        <button onClick={change_state.to_deleting}>Delete</button>
       </When>
 
       <When condition={note_state === "EDITING"}>
@@ -77,86 +166,19 @@ export default function Note({document}: Props) {
               <span>Save to see changes</span>
             </label>
 
-            <button
-              onClick={() => {
-                const formatted_content = format_markdown(note_content)
-
-                set_note_content(formatted_content)
-              }}
-            >
-              Format
-            </button>
+            <button onClick={note_actions.format}>Format</button>
 
             <button
               disabled={
-                is_content_untouched &&
-                new_title === document.title &&
-                is_share_note_untouched
+                new_title === note.title &&
+                is_untouched.content &&
+                is_untouched.share
               }
-              onClick={async () => {
-                if (new_title === "") return
-
-                const title_changed = new_title !== document.title
-                const new_title_slug = slugify(new_title, {
-                  replacement: "-",
-                  lower: true,
-                  strict: true,
-                  trim: true,
-                })
-
-                const user = await supabase.auth.getUser()
-
-                if (title_changed) {
-                  const existing_note = await fetch_note_by_slug(
-                    supabase,
-                    new_title_slug,
-                    user.data.user!.id
-                  )
-
-                  if (existing_note) {
-                    return
-                  }
-                }
-
-                if (
-                  !is_content_untouched ||
-                  title_changed ||
-                  !is_share_note_untouched
-                ) {
-                  const formatted_content = format_markdown(note_content)
-
-                  await supabase
-                    .from("notes")
-                    .update({
-                      content: formatted_content,
-                      title: new_title,
-                      title_slug: new_title_slug,
-                      shared: share_note,
-                    })
-                    .eq("id", document.id)
-
-                  document.content = note_content
-                  document.title = new_title
-                  document.title_slug = new_title_slug
-                  document.shared = share_note
-
-                  if (title_changed) {
-                    router.replace(new_title_slug)
-                  } else {
-                    set_note_state("VIEWING")
-                  }
-                }
-              }}
+              onClick={note_actions.edit}
             >
               Save
             </button>
-            <button
-              onClick={() => {
-                set_share_note(document.shared)
-                set_note_content(document.content!)
-                set_note_state("VIEWING")
-              }}
-            >
+            <button onClick={back_to_viewing.from_editing}>
               Cancel editing
             </button>
           </div>
@@ -169,28 +191,9 @@ export default function Note({document}: Props) {
         </div>
       </When>
       <When condition={note_state === "DELETING"}>
-        <h1>{document.title}</h1>
-        <button
-          onClick={() => {
-            supabase
-              .from("notes")
-              .delete()
-              .eq("id", document.id)
-              .then(() => {
-                console.log("deleted", document.id)
-                router.replace("/")
-              })
-          }}
-        >
-          Delete
-        </button>
-        <button
-          onClick={() => {
-            set_note_state("VIEWING")
-          }}
-        >
-          Cancel
-        </button>
+        <h1>{note.title}</h1>
+        <button onClick={note_actions.delete}>Delete</button>
+        <button onClick={back_to_viewing.from_deleting}>Cancel</button>
       </When>
     </div>
   )

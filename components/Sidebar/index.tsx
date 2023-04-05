@@ -10,24 +10,44 @@ import Search from "components/Sidebar/Search"
 import useNotesStore from "stores/notes_store"
 
 export default function Sidebar() {
-  const {notes, opened_note_slug, search} = useNotesStore()
+  const {notes: all_notes, opened_note_slug, search} = useNotesStore()
 
-  const filtered_notes = useMemo(() => {
+  const notes = useMemo(() => {
     if (search) {
       const options = {
         includeScore: false,
         keys: ["title", "content"],
       }
 
-      const fuse = new Fuse(notes, options)
+      const fuse = new Fuse(all_notes, options)
 
-      const result = fuse.search(search)
-
-      return result.map((v) => v.item)
+      return fuse.search(search).map((fuse_result) => fuse_result.item)
     }
 
-    return notes
-  }, [notes, search])
+    return all_notes
+  }, [all_notes, search])
+
+  const bookmarked_notes = notes
+    .filter(({is_bookmark}) => is_bookmark)
+    .map(({id, title, title_slug}) => (
+      <NoteLink
+        key={id}
+        opened={title_slug === opened_note_slug}
+        title={title}
+        title_slug={title_slug}
+      />
+    ))
+
+  const unbookmarked_notes = notes
+    .filter(({is_bookmark}) => !is_bookmark)
+    .map(({id, title, title_slug}) => (
+      <NoteLink
+        key={id}
+        opened={title_slug === opened_note_slug}
+        title={title}
+        title_slug={title_slug}
+      />
+    ))
 
   return (
     <div className="flex h-screen w-1/4 flex-col justify-between bg-zinc-100">
@@ -42,31 +62,13 @@ export default function Sidebar() {
           <div>
             <Heading>Bookmarks</Heading>
 
-            <div>
-              {filtered_notes
-                .filter(({is_bookmark}) => is_bookmark)
-                .map((note) => (
-                  <NoteLink
-                    key={note.id}
-                    document={note}
-                    opened={note.title_slug === opened_note_slug}
-                  />
-                ))}
-            </div>
+            <div>{bookmarked_notes}</div>
           </div>
 
           <div>
             <Heading>Notes</Heading>
 
-            {filtered_notes
-              .filter(({is_bookmark}) => !is_bookmark)
-              .map((note) => (
-                <NoteLink
-                  key={note.id}
-                  document={note}
-                  opened={note.title_slug === opened_note_slug}
-                />
-              ))}
+            <div>{unbookmarked_notes}</div>
           </div>
         </div>
       </div>

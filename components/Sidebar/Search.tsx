@@ -4,6 +4,8 @@ import {MdSearch} from "react-icons/md"
 
 import useNotesStore from "stores/notes_store"
 
+const DEBOUNCE_INTERVAL = 300
+
 export default function Search() {
   const {set_search} = useNotesStore()
 
@@ -16,7 +18,7 @@ export default function Search() {
       } else {
         set_search(null)
       }
-    }, 300)
+    }, DEBOUNCE_INTERVAL)
   }, [set_search])
 
   useEffect(() => {

@@ -3,12 +3,10 @@ import {HiOutlineDocumentText} from "react-icons/hi"
 
 type Props = {
   opened?: boolean
-  document: Note
+  title: string
+  title_slug: string
 }
-export default function NoteLink({
-  opened = false,
-  document: {title, title_slug},
-}: Props) {
+export default function NoteLink({opened = false, title, title_slug}: Props) {
   return (
     <Link href={title_slug}>
       <div

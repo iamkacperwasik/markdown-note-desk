@@ -22,15 +22,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
+  const user_id = session.user.id
+
   const {count: notes_count} = await supabase
     .from("notes")
     .select("*", {count: "exact", head: true})
+    .eq("user_id", user_id)
 
   if (notes_count === 0) {
     await supabase.from("notes").insert({
       title: "Empty note!",
       title_slug: "empty-note",
-      user_id: session.user.id,
+      user_id: user_id,
       content: "# Empty note",
       is_bookmark: false,
     })
@@ -43,7 +46,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  const user_id = session.user.id
   const title_slug = await fetch_first_note_slug(supabase, user_id)
 
   return {

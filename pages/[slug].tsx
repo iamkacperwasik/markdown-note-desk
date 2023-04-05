@@ -84,7 +84,7 @@ export default function NotePage({
       <div className="flex h-screen select-text bg-zinc-50 text-slate-900">
         <Sidebar />
 
-        <Note document={current_open_note} />
+        <Note note={current_open_note} />
       </div>
     </>
   )

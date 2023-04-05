@@ -3,10 +3,8 @@ import Head from "next/head"
 import {useRouter} from "next/router"
 import {useEffect} from "react"
 
-import {
-  createBrowserSupabaseClient,
-  createServerSupabaseClient,
-} from "@supabase/auth-helpers-nextjs"
+import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
+import {useSupabaseClient} from "@supabase/auth-helpers-react"
 import {Auth} from "@supabase/auth-ui-react"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -29,7 +27,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 }
 
 export default function LoginPage() {
-  const supabase = createBrowserSupabaseClient()
+  const supabase = useSupabaseClient()
   const router = useRouter()
 
   useEffect(() => {
