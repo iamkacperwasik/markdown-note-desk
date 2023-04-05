@@ -45,6 +45,7 @@
       "^@supabase/(.*)$",
       "^types/(.*)$",
       "^components/(.*)$",
+      "^hooks/(.*)$",
       "^utils/(.*)$",
       "^stores/(.*)$",
       "^[./]"

@@ -5,7 +5,8 @@ import NoteLink from "components/List/NoteLink"
 
 import useNotesStore from "stores/notes_store"
 
-export default function NoteList() {
+type Props = {bookmarked?: boolean}
+export default function NoteList({bookmarked = false}: Props) {
   const {notes: all_notes, opened_note_slug, search} = useNotesStore()
 
   const filtered_notes = useMemo(() => {
@@ -24,7 +25,7 @@ export default function NoteList() {
   }, [all_notes, search])
 
   const notes = filtered_notes
-    .filter(({is_bookmark}) => !is_bookmark)
+    .filter(({is_bookmark}) => is_bookmark === bookmarked)
     .map(({id, title, title_slug}) => (
       <NoteLink
         key={id}
@@ -34,9 +35,13 @@ export default function NoteList() {
       />
     ))
 
+  const heading = bookmarked ? "BOOKMARKS" : "NOTES"
+
   return (
     <div className="mb-2">
-      <h2 className="font-bold">NOTES ({notes.length})</h2>
+      <h2 className="font-bold">
+        {heading} ({notes.length})
+      </h2>
 
       <div className="flex flex-col gap-[2px]">{notes}</div>
     </div>

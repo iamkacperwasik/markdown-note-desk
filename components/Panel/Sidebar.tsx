@@ -1,5 +1,4 @@
 import NewNoteButton from "components/Buttons/NewNoteButton"
-import BookmarkedNoteList from "components/List/BookmarkedNoteList copy"
 import NoteList from "components/List/NoteList"
 import UserPanel from "components/Panel/UserPanel"
 
@@ -11,7 +10,7 @@ export default function Sidebar() {
       <div className="bg-[#111111f9] p-4">
         <NewNoteButton />
 
-        <BookmarkedNoteList />
+        <NoteList bookmarked />
         <NoteList />
       </div>
     </div>

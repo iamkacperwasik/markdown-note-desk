@@ -12,11 +12,14 @@ import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 import fetch_notes from "utils/supabase/fetch_notes"
 
 import useNotesStore from "stores/notes_store"
+import useUserStore from "stores/user_store"
 
 export const getServerSideProps: GetServerSideProps<
   {
     notes: Note[]
     slug: string
+    email: string
+    user_id: string
   },
   {
     slug: string
@@ -53,10 +56,14 @@ export const getServerSideProps: GetServerSideProps<
 
   const notes = await fetch_notes(supabase, user_id)
 
+  const email = session.user.email!
+
   return {
     props: {
       notes,
       slug,
+      user_id,
+      email,
     },
   }
 }
@@ -64,13 +71,29 @@ export const getServerSideProps: GetServerSideProps<
 export default function NotePage({
   notes,
   slug,
+  email,
+  user_id,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const {set_notes, set_opened_note_slug} = useNotesStore()
+  const {set_email, set_user_id} = useUserStore()
 
   useEffect(() => {
     set_notes(notes)
     set_opened_note_slug(slug)
-  }, [notes, set_notes, set_opened_note_slug, slug])
+    set_email(email)
+    set_user_id(user_id)
+  }, [
+    email,
+    notes,
+    set_email,
+    set_notes,
+    set_opened_note_slug,
+    set_user_id,
+    slug,
+    user_id,
+  ])
+
+  const note = notes.find(({title_slug}) => title_slug === slug)!
 
   return (
     <>
@@ -78,7 +101,7 @@ export default function NotePage({
         <meta name="robots" content="noindex" />
       </Head>
 
-      <Layout />
+      <Layout note={note} />
     </>
   )
 }
