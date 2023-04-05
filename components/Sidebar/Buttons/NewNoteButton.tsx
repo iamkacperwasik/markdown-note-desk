@@ -5,7 +5,8 @@ import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
 import {Database} from "types/supabase"
 
-import fetch_note_by_slug from "utils/fetching/fetch_note_by_slug"
+import create_empty_note from "utils/supabase/create_empty_note"
+import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 
 export default function NewNoteButton() {
   const supabase = useSupabaseClient<Database>()
@@ -16,10 +17,12 @@ export default function NewNoteButton() {
       data: {user},
     } = await supabase.auth.getUser()
 
+    const user_id = user!.id
+
     const existing_note = await fetch_note_by_slug(
       supabase,
       "empty-note",
-      user!.id
+      user_id
     )
 
     if (existing_note) {
@@ -28,13 +31,7 @@ export default function NewNoteButton() {
       return
     }
 
-    await supabase.from("notes").insert({
-      title: "Empty note!",
-      title_slug: "empty-note",
-      user_id: user!.id,
-      content: "# Empty note",
-      is_bookmark: false,
-    })
+    await create_empty_note(supabase, user_id)
 
     router.replace("/empty-note")
   }

@@ -10,7 +10,7 @@ import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
 import {Database} from "types/supabase"
 
-import fetch_note_by_slug from "utils/fetching/fetch_note_by_slug"
+import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
 import format_markdown from "utils/text/format_markdown"
 
 type NoteState = "VIEWING" | "EDITING" | "DELETING"

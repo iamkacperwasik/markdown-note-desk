@@ -4,7 +4,9 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-import fetch_first_note_slug from "utils/fetching/fetch_first_note_slug"
+import create_empty_note from "utils/supabase/create_empty_note"
+import fetch_first_note_slug from "utils/supabase/fetch_first_note_slug"
+import fetch_notes_count from "utils/supabase/fetch_notes_count"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
@@ -24,19 +26,10 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   const user_id = session.user.id
 
-  const {count: notes_count} = await supabase
-    .from("notes")
-    .select("*", {count: "exact", head: true})
-    .eq("user_id", user_id)
+  const notes_count = await fetch_notes_count(supabase, user_id)
 
   if (notes_count === 0) {
-    await supabase.from("notes").insert({
-      title: "Empty note!",
-      title_slug: "empty-note",
-      user_id: user_id,
-      content: "# Empty note",
-      is_bookmark: false,
-    })
+    await create_empty_note(supabase, user_id)
 
     return {
       redirect: {

@@ -8,6 +8,9 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
+import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
+import increment_note_views from "utils/supabase/increment_note_views"
+
 export const getServerSideProps: GetServerSideProps<
   {
     note: Note
@@ -34,12 +37,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const {slug, user_id} = ctx.params!
 
-  const {data: current_note} = await supabase
-    .from("notes")
-    .select("*")
-    .eq("title_slug", slug)
-    .eq("user_id", user_id)
-    .single()
+  const current_note = await fetch_note_by_slug(supabase, slug, user_id)
 
   if (!current_note) {
     return {
@@ -50,13 +48,10 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  await supabase
-    .from("notes")
-    .update({
-      views: current_note.views + 1,
-    })
-    .eq("title_slug", slug)
-    .eq("user_id", user_id)
+  const {title_slug, views} = current_note
+
+  await increment_note_views(supabase, user_id, title_slug, views)
+  current_note.views += 1
 
   return {
     props: {
@@ -80,6 +75,7 @@ export default function SharedNotePage({
           children={note.content || ""}
           remarkPlugins={[remarkGfm]}
         />
+        <p>Views: {note.views}</p>
       </div>
     </>
   )
