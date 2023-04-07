@@ -2,16 +2,16 @@ import {SupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-export default async function fetch_first_note_slug(
+export const fetchFirstNoteSlug = async (
   supabase: SupabaseClient<Database>,
-  user_id: string
-): Promise<string> {
+  userId: string
+): Promise<string> => {
   const {data} = await supabase
     .from("notes")
-    .select("title_slug")
-    .eq("user_id", user_id)
+    .select("titleSlug")
+    .eq("userId", userId)
     .limit(1)
     .single()
 
-  return data!.title_slug
+  return data!.titleSlug
 }

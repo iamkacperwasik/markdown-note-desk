@@ -1,37 +1,37 @@
 import Fuse from "fuse.js"
 import {useMemo} from "react"
 
-import NoteLink from "components/List/NoteLink"
+import {NoteLink} from "components/List/NoteLink"
 
-import useNotesStore from "stores/notes_store"
+import {useNotesStore} from "stores/useNotesStore"
 
 type Props = {bookmarked?: boolean}
-export default function NoteList({bookmarked = false}: Props) {
-  const {notes: all_notes, opened_note_slug, search} = useNotesStore()
+export const NoteList = ({bookmarked = false}: Props) => {
+  const {notes: allNotes, openedNoteSlug, search} = useNotesStore()
 
-  const filtered_notes = useMemo(() => {
+  const filteredNotes = useMemo(() => {
     if (search) {
       const options = {
         includeScore: false,
         keys: ["title", "content"],
       }
 
-      const fuse = new Fuse(all_notes, options)
+      const fuse = new Fuse(allNotes, options)
 
-      return fuse.search(search).map((fuse_result) => fuse_result.item)
+      return fuse.search(search).map((fuseResult) => fuseResult.item)
     }
 
-    return all_notes
-  }, [all_notes, search])
+    return allNotes
+  }, [allNotes, search])
 
-  const notes = filtered_notes
-    .filter(({is_bookmark}) => is_bookmark === bookmarked)
-    .map(({id, title, title_slug}) => (
+  const notes = filteredNotes
+    .filter(({isBookmark}) => isBookmark === bookmarked)
+    .map(({id, title, titleSlug}) => (
       <NoteLink
         key={id}
-        opened={title_slug === opened_note_slug}
+        opened={titleSlug === openedNoteSlug}
         title={title}
-        title_slug={title_slug}
+        titleSlug={titleSlug}
       />
     ))
 

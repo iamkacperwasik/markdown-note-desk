@@ -11,36 +11,36 @@ export interface Database {
     Tables: {
       notes: {
         Row: {
-          content: string | null
-          created_at: string
+          content: string
+          createdAt: string
           id: number
-          is_bookmark: boolean
-          shared: boolean
+          isBookmark: boolean
+          isShared: boolean
           title: string
-          title_slug: string
-          user_id: string
+          titleSlug: string
+          userId: string
           views: number
         }
         Insert: {
-          content?: string | null
-          created_at?: string
+          content?: string
+          createdAt?: string
           id?: number
-          is_bookmark?: boolean
-          shared?: boolean
+          isBookmark?: boolean
+          isShared?: boolean
           title: string
-          title_slug: string
-          user_id: string
+          titleSlug: string
+          userId: string
           views?: number
         }
         Update: {
-          content?: string | null
-          created_at?: string
+          content?: string
+          createdAt?: string
           id?: number
-          is_bookmark?: boolean
-          shared?: boolean
+          isBookmark?: boolean
+          isShared?: boolean
           title?: string
-          title_slug?: string
-          user_id?: string
+          titleSlug?: string
+          userId?: string
           views?: number
         }
       }

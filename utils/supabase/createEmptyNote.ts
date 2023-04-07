@@ -2,15 +2,14 @@ import {SupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-export default async function create_empty_note(
+export const createEmptyNote = (
   supabase: SupabaseClient<Database>,
-  user_id: string
-) {
-  await supabase.from("notes").insert({
+  userId: string
+) =>
+  supabase.from("notes").insert({
     title: "Empty note!",
-    title_slug: "empty-note",
-    user_id: user_id,
+    titleSlug: "empty-note",
+    userId: userId,
     content: "# Empty note",
-    is_bookmark: false,
+    isBookmark: false,
   })
-}

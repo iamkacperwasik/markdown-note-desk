@@ -6,20 +6,20 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-import Layout from "components/View/Layout"
+import {Layout} from "components/View/Layout"
 
-import fetch_note_by_slug from "utils/supabase/fetch_note_by_slug"
-import fetch_notes from "utils/supabase/fetch_notes"
+import {fetchNoteBySlug} from "utils/supabase/fetchNoteBySlug"
+import {fetchNotes} from "utils/supabase/fetchNotes"
 
-import useNotesStore from "stores/notes_store"
-import useUserStore from "stores/user_store"
+import {useNotesStore} from "stores/useNotesStore"
+import {useUserStore} from "stores/useUserStore"
 
 export const getServerSideProps: GetServerSideProps<
   {
     notes: Note[]
     slug: string
     email: string
-    user_id: string
+    userId: string
   },
   {
     slug: string
@@ -41,11 +41,11 @@ export const getServerSideProps: GetServerSideProps<
   }
 
   const {slug} = ctx.params!
-  const user_id = session.user.id
+  const userId = session.user.id
 
-  const current_note = await fetch_note_by_slug(supabase, slug, user_id)
+  const note = await fetchNoteBySlug(supabase, slug, userId)
 
-  if (!current_note) {
+  if (!note) {
     return {
       redirect: {
         permanent: false,
@@ -54,7 +54,7 @@ export const getServerSideProps: GetServerSideProps<
     }
   }
 
-  const notes = await fetch_notes(supabase, user_id)
+  const notes = await fetchNotes(supabase, userId)
 
   const email = session.user.email!
 
@@ -62,38 +62,38 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       notes,
       slug,
-      user_id,
+      userId,
       email,
     },
   }
 }
 
-export default function NotePage({
+const NotePage = ({
   notes,
   slug,
   email,
-  user_id,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const {set_notes, set_opened_note_slug} = useNotesStore()
-  const {set_email, set_user_id} = useUserStore()
+  userId,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) => {
+  const {setNotes, setOpenedNoteSlug} = useNotesStore()
+  const {setEmail, setUserId} = useUserStore()
 
   useEffect(() => {
-    set_notes(notes)
-    set_opened_note_slug(slug)
-    set_email(email)
-    set_user_id(user_id)
+    setNotes(notes)
+    setOpenedNoteSlug(slug)
+    setEmail(email)
+    setUserId(userId)
   }, [
     email,
     notes,
-    set_email,
-    set_notes,
-    set_opened_note_slug,
-    set_user_id,
     slug,
-    user_id,
+    userId,
+    setEmail,
+    setNotes,
+    setOpenedNoteSlug,
+    setUserId,
   ])
 
-  const note = notes.find(({title_slug}) => title_slug === slug)!
+  const note = notes.find(({titleSlug}) => titleSlug === slug)!
 
   return (
     <>
@@ -105,3 +105,5 @@ export default function NotePage({
     </>
   )
 }
+
+export default NotePage

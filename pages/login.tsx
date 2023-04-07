@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return {props: {}}
 }
 
-export default function LoginPage() {
+const LoginPage = () => {
   const supabase = useSupabaseClient()
   const router = useRouter()
 
@@ -62,3 +62,5 @@ export default function LoginPage() {
     </>
   )
 }
+
+export default LoginPage

@@ -2,7 +2,7 @@ import {useRouter} from "next/router"
 
 import {useSupabaseClient} from "@supabase/auth-helpers-react"
 
-export default function LogoutButton() {
+export const LogoutButton = () => {
   const router = useRouter()
   const supabase = useSupabaseClient()
 

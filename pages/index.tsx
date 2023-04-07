@@ -4,9 +4,9 @@ import {createServerSupabaseClient} from "@supabase/auth-helpers-nextjs"
 
 import {Database} from "types/supabase"
 
-import create_empty_note from "utils/supabase/create_empty_note"
-import fetch_first_note_slug from "utils/supabase/fetch_first_note_slug"
-import fetch_notes_count from "utils/supabase/fetch_notes_count"
+import {createEmptyNote} from "utils/supabase/createEmptyNote"
+import {fetchFirstNoteSlug} from "utils/supabase/fetchFirstNoteSlug"
+import {fetchNotesCount} from "utils/supabase/fetchNotesCount"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const supabase = createServerSupabaseClient<Database>(ctx)
@@ -24,12 +24,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  const user_id = session.user.id
+  const userId = session.user.id
 
-  const notes_count = await fetch_notes_count(supabase, user_id)
+  const notesCount = await fetchNotesCount(supabase, userId)
 
-  if (notes_count === 0) {
-    await create_empty_note(supabase, user_id)
+  if (notesCount === 0) {
+    await createEmptyNote(supabase, userId)
 
     return {
       redirect: {
@@ -39,15 +39,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
-  const title_slug = await fetch_first_note_slug(supabase, user_id)
+  const titleSlug = await fetchFirstNoteSlug(supabase, userId)
 
   return {
     redirect: {
       permanent: false,
-      destination: title_slug,
+      destination: titleSlug,
     },
   }
 }
 
-// eslint-disable-next-line import/no-anonymous-default-export
-export default function IndexPage() {}
+const IndexPage = () => {}
+
+export default IndexPage

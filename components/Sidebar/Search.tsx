@@ -2,28 +2,28 @@ import {debounce} from "debounce"
 import {ChangeEvent, useEffect, useMemo} from "react"
 import {MdSearch} from "react-icons/md"
 
-import useNotesStore from "stores/notes_store"
+import {useNotesStore} from "stores/useNotesStore"
 
 const DEBOUNCE_INTERVAL = 300
 
-export default function Search() {
-  const {set_search} = useNotesStore()
+export const Search = () => {
+  const {setSearch} = useNotesStore()
 
-  const debounced_set_search = useMemo(() => {
+  const debouncedSetSearch = useMemo(() => {
     return debounce(({target}: ChangeEvent<HTMLInputElement>) => {
-      const new_value = target.value
+      const newValue = target.value
 
-      if (new_value !== "") {
-        set_search(target.value)
+      if (newValue !== "") {
+        setSearch(target.value)
       } else {
-        set_search(null)
+        setSearch(null)
       }
     }, DEBOUNCE_INTERVAL)
-  }, [set_search])
+  }, [setSearch])
 
   useEffect(() => {
     return () => {
-      debounced_set_search.clear()
+      debouncedSetSearch.clear()
     }
   })
 
@@ -35,7 +35,7 @@ export default function Search() {
         type="text"
         placeholder="Search"
         className="text-bold text-md w-full bg-zinc-100 py-[4px]"
-        onChange={debounced_set_search}
+        onChange={debouncedSetSearch}
       />
     </label>
   )
