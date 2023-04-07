@@ -72,7 +72,7 @@ const SharedNotePage = ({
       <meta name="robots" content="noindex" />
     </Head>
 
-    <div className="w-full gap-4 scroll-smooth bg-[#111111f9] px-10 pt-10 text-white">
+    <div className="min-h-screen w-full gap-4 scroll-smooth bg-[#111111f9] px-10 pt-10 text-white">
       <SimpleInfoPanel title={title} />
 
       <div className="w-full bg-[#111111f9] p-4">
