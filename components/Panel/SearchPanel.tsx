@@ -6,7 +6,7 @@ import {useNotesStore} from "stores/useNotesStore"
 
 const DEBOUNCE_INTERVAL = 300
 
-export const Search = () => {
+export const SearchPanel = () => {
   const {setSearch} = useNotesStore()
 
   const debouncedSetSearch = useMemo(() => {
