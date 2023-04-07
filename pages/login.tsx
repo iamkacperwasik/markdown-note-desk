@@ -42,7 +42,7 @@ const LoginPage = () => {
         <meta name="robots" content="noindex" />
       </Head>
 
-      <div className="flex h-screen items-center justify-center bg-zinc-100">
+      <div className="flex h-screen items-center justify-center  bg-[#111111f9]">
         <Auth
           supabaseClient={supabase}
           providers={[]}
@@ -50,11 +50,13 @@ const LoginPage = () => {
             extend: false,
             className: {
               button:
-                "text-2xl my-2 w-full py-[4px] text-left font-bold w-max uppercase text-sky-600 mt-4",
-              input: "text-bold bg-zinc-100 text-md w-full py-[8px]",
-              label: "text-xl font-bold uppercase text-zinc-400",
-              anchor: "block text-left text-sky-600 ",
-              message: "mt-4 text-black font-bold text-xl block",
+                "block hover:underline w-full text-white text-2xl font-semibold",
+              input:
+                "text-bold text-md w-full bg-[#111111f9] py-[4px] text-white my-2",
+              label: "text-xl font-bold text-white",
+              anchor: "block hover:underline text-white",
+              message: "mt-4 text-red-200 font-bold text-xl block",
+              container: "bg-[#111111f9] p-4",
             },
           }}
         />
