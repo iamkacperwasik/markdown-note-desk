@@ -1,17 +1,5 @@
 import {create} from "zustand"
 
-export type NotesStore = {
-  notes: Note[]
-  setNotes: (notes: Note[]) => void
-  pushNotes: (notes: Note[]) => void
-
-  openedNoteSlug: string | null
-  setOpenedNoteSlug: (slug: string) => void
-
-  search: string | null
-  setSearch: (search: string | null) => void
-}
-
 export const useNotesStore = create<NotesStore>((set) => ({
   notes: [],
   setNotes: (notes: Note[]) => {
