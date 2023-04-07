@@ -8,22 +8,16 @@ type Props = ReturnType<typeof useNote> & {
   note: Note
 }
 export const ViewingPanel = ({note, methods}: Props) => {
-  const [sharedLink, setSharedLink] = useState<string | null>(null)
+  const [sharedLink, setSharedLink] = useState<null | string>(null)
 
   useEffect(() => {
-    if (note.isShared) {
-      const fullUrl =
-        typeof window !== "undefined" && window.location.origin
-          ? window.location.origin
-          : ""
-
-      const sharedLink = `${fullUrl}/shared/${note.userId}/${note.titleSlug}`
-
-      setSharedLink(sharedLink)
-    } else {
-      setSharedLink(null)
-    }
-  }, [note.isShared, note.titleSlug, note.userId])
+    if (typeof window !== "undefined") {
+      setSharedLink(
+        `${window!.location.origin}/shared/${note.userId}/${note.titleSlug}`
+      )
+    } else setSharedLink(null)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [note.isShared])
 
   return (
     <div className="sticky top-0 mb-4 flex justify-between gap-8 bg-[#111111f9] p-4">
@@ -34,7 +28,7 @@ export const ViewingPanel = ({note, methods}: Props) => {
         <When condition={note.isShared}>
           <p className="text-xs">
             Your note is available for everyone at:{" "}
-            <Link target="_blank" href={sharedLink!}>
+            <Link target="_blank" href={sharedLink || ""}>
               <span className="block cursor-pointer select-text text-blue-500">
                 {sharedLink}
               </span>
