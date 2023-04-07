@@ -8,7 +8,14 @@ export const EditingPanel = ({note, data, methods}: Props) => (
     <div className="sticky top-0 mb-4 flex justify-between gap-8 bg-[#111111f9] p-4">
       <div>
         <span className="text-sm">Editing:</span>
-        <h2 className="font-bold uppercase">{note.title}</h2>
+        <h2 className=""></h2>
+        <input
+          type="text"
+          placeholder="Search"
+          className="text-md w-full bg-[#111111f9] py-[4px] font-bold  uppercase text-white"
+          value={data.newTitle}
+          onChange={({target}) => methods.setNewTitle(target.value)}
+        />
       </div>
 
       <div className="flex gap-8">

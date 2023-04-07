@@ -147,6 +147,7 @@ export const useNote = (note: Note) => {
     data: {
       noteState,
       noteContent,
+      newTitle,
       isDataUntouched,
       isNoteShared,
       isBookmarked,
@@ -158,6 +159,7 @@ export const useNote = (note: Note) => {
       setNoteContent,
       setIsNoteShared,
       setIsBookmarked,
+      setNewTitle,
     },
   }
 }
