@@ -28,15 +28,17 @@ export const Search = () => {
   })
 
   return (
-    <label className="mt-4 flex items-center gap-4 py-4">
-      <MdSearch className="w-min text-2xl text-zinc-400" />
+    <div className="mb-4 bg-[#111111f9] p-4">
+      <label className="flex items-center gap-4">
+        <MdSearch className="w-min text-2xl text-zinc-400" />
 
-      <input
-        type="text"
-        placeholder="Search"
-        className="text-bold text-md w-full bg-zinc-100 py-[4px]"
-        onChange={debouncedSetSearch}
-      />
-    </label>
+        <input
+          type="text"
+          placeholder="Search"
+          className="text-bold text-md w-full bg-[#111111f9]  py-[4px] text-white"
+          onChange={debouncedSetSearch}
+        />
+      </label>
+    </div>
   )
 }
