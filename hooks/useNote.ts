@@ -15,13 +15,16 @@ export const useNote = (note: Note) => {
   const router = useRouter()
 
   const [noteState, setNoteState] = useState<NoteState>("VIEWING")
+
   const [noteContent, setNoteContent] = useState<string>(note.content || "")
   const [newTitle, setNewTitle] = useState(note.title)
   const [isNoteShared, setIsNoteShared] = useState(note.isShared)
+  const [isBookmarked, setIsBookmarked] = useState(note.isBookmark)
 
   const isUntouched = {
     content: noteContent === note.content,
     isShared: isNoteShared === note.isShared,
+    isBookmarked: isBookmarked === note.isBookmark,
   }
 
   useEffect(() => {
@@ -30,9 +33,10 @@ export const useNote = (note: Note) => {
     setNoteContent(formattedContent)
     setNewTitle(note.title)
     setIsNoteShared(note.isShared)
+    setIsBookmarked(note.isBookmark)
 
     changeState.toViewing()
-  }, [note.content, note.title, note.isShared])
+  }, [note.content, note.title, note.isShared, note.isBookmark])
 
   const changeState = {
     toViewing: () => {
@@ -49,6 +53,7 @@ export const useNote = (note: Note) => {
   const backToViewing = {
     fromEditing: () => {
       setIsNoteShared(note.isShared)
+      setIsBookmarked(note.isBookmark)
       setNoteContent(note.content!)
 
       changeState.toViewing()
@@ -93,7 +98,12 @@ export const useNote = (note: Note) => {
         }
       }
 
-      if (titleChanged || !isUntouched.content || !isUntouched.isShared) {
+      if (
+        titleChanged ||
+        !isUntouched.content ||
+        !isUntouched.isShared ||
+        !isUntouched.isBookmarked
+      ) {
         const formattedContent = formatMarkdown(noteContent)
 
         await supabase
@@ -103,6 +113,7 @@ export const useNote = (note: Note) => {
             title: newTitle,
             titleSlug: newTitleSlug,
             isShared: isNoteShared,
+            isBookmark: isBookmarked,
           })
           .eq("id", note.id)
 
@@ -110,6 +121,7 @@ export const useNote = (note: Note) => {
         note.title = newTitle
         note.titleSlug = newTitleSlug
         note.isShared = isNoteShared
+        note.isBookmark = isBookmarked
 
         if (titleChanged) {
           router.replace(newTitleSlug)
@@ -126,14 +138,18 @@ export const useNote = (note: Note) => {
   }
 
   const isDataUntouched =
-    newTitle === note.title && isUntouched.content && isUntouched.isShared
+    newTitle === note.title &&
+    isUntouched.content &&
+    isUntouched.isShared &&
+    isUntouched.isBookmarked
 
   return {
     data: {
-      isDataUntouched,
       noteState,
       noteContent,
+      isDataUntouched,
       isNoteShared,
+      isBookmarked,
     },
     methods: {
       noteActions,
@@ -141,6 +157,7 @@ export const useNote = (note: Note) => {
       changeState,
       setNoteContent,
       setIsNoteShared,
+      setIsBookmarked,
     },
   }
 }

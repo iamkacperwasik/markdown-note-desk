@@ -46,5 +46,17 @@ export const EditingPanel = ({note, data, methods}: Props) => (
       </label>
       <span className="text-sm font-thin">Save to see apply changes!</span>
     </div>
+
+    <div className="mb-4 bg-[#111111f9] p-4">
+      <label className="flex items-center gap-4">
+        <p className="font-semibold">Bookmark this note</p>
+        <input
+          type="checkbox"
+          className="h-3 w-3"
+          checked={data.isBookmarked}
+          onChange={({target}) => methods.setIsBookmarked(target.checked)}
+        />
+      </label>
+    </div>
   </>
 )
