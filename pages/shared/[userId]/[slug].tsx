@@ -16,6 +16,7 @@ export const getServerSideProps: GetServerSideProps<
   {
     title: string
     content: string
+    views: number
   },
   {
     slug: string
@@ -59,6 +60,7 @@ export const getServerSideProps: GetServerSideProps<
     props: {
       title: note.title,
       content: note.content || "",
+      views: note.views,
     },
   }
 }
@@ -66,6 +68,7 @@ export const getServerSideProps: GetServerSideProps<
 const SharedNotePage = ({
   title,
   content,
+  views,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => (
   <>
     <Head>
@@ -73,7 +76,7 @@ const SharedNotePage = ({
     </Head>
 
     <div className="min-h-screen w-full gap-4 scroll-smooth bg-[#111111f9] px-10 pt-10 text-white">
-      <SimpleInfoPanel title={title} />
+      <SimpleInfoPanel title={title} views={views} />
 
       <div className="w-full bg-[#111111f9] p-4">
         <MarkdownPreview content={content || ""} />
