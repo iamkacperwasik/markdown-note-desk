@@ -42,7 +42,7 @@ export const getServerSideProps: GetServerSideProps<
 
   const note = await fetchNoteBySlug(supabase, slug, userId)
 
-  if (!note) {
+  if (!note || !note.isShared) {
     return {
       redirect: {
         permanent: false,
